@@ -109,14 +109,35 @@ public class DepotDao {
 		PreparedStatement ps = null;
 		try {
 			conn.setAutoCommit(false);
-			ps = conn.prepareStatement("update depot set d_id=?,d_variety_num=?,d_total_price=?,d_date=?,d_settlement_way=?,supplier_id=?,supplier_name=? where d_Id = ?");
-			ps.setObject(1, depot.getdId());
-			ps.setObject(2, depot.getdVarietyNum());
-			ps.setObject(3, depot.getdTotalPrice());
-			ps.setObject(4, depot.getdDate());
-			ps.setObject(5, depot.getdSettlementWay());
-			ps.setObject(8, depot.getdId());
+			ps = conn.prepareStatement("update depot set d_variety_num=?,d_total_price=?,d_date=?,d_settlement_way=? where d_Id = ?");
+			ps.setObject(1, depot.getdVarietyNum());
+			ps.setObject(2, depot.getdTotalPrice());
+			ps.setObject(3, depot.getdDate());
+			ps.setObject(4, depot.getdSettlementWay());
+			ps.setObject(5, depot.getdId());
 			ps.executeUpdate();
+			
+			//删除并更新数据库中的订单明细和商品数量
+			ps = conn.prepareStatement("{CALL update_goods_number(?)}");
+			ps.setObject(1, depot.getdId());
+			ps.execute();
+			//增加新的订单信息
+			List<Purchase> purchases = depot.getPurchases();
+			for (int i = 0; i < purchases.size(); i++) {
+				ps = conn.prepareStatement("insert into purchase(depot_id,goods_id,goods_price,goods_number) values (?,?,?,?)");
+				ps.setObject(1,depot.getdId());
+				ps.setObject(2,purchases.get(i).getGoodsId().getgId());
+				ps.setObject(3, purchases.get(i).getGoodsPrice());
+				ps.setObject(4, purchases.get(i).getGoodsNumber());
+				ps.executeUpdate();
+				
+				//同时修改数量商品数量
+				ps = conn.prepareStatement("UPDATE `goods` SET g_number=g_number+? WHERE g_id=?");
+				ps.setObject(1, purchases.get(i).getGoodsNumber());
+				ps.setObject(2,purchases.get(i).getGoodsId().getgId());
+				ps.executeUpdate();
+			}
+			
 			conn.commit();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -132,7 +153,7 @@ public class DepotDao {
 		ResultSet rs = null;
 		try {
 			conn.setAutoCommit(false);
-			ps = conn.prepareStatement("select * from depot where d_Id=?");
+			ps = conn.prepareStatement("SELECT * FROM `depot` d LEFT JOIN purchase p ON d.d_id = p.depot_id  where d.d_Id=?");
 			
 			ps.setObject(1, depot1.getdId());
 			
@@ -140,12 +161,42 @@ public class DepotDao {
 			conn.commit();
 			Depot depot = null;
 			while (rs.next()) {
-				depot = new Depot();
-				depot.setdId(rs.getString("d_id"));
-				depot.setdVarietyNum(rs.getInt("d_variety_num"));
-				depot.setdTotalPrice(rs.getInt("d_total_price"));
-				depot.setdDate(rs.getString("d_date"));
-				depot.setdSettlementWay(rs.getString("d_settlement_way"));
+				if(depot == null) {
+					//如果当前遍历到的进货单还没有被添加，添加进货单
+					depot = new Depot();
+					depot.setdId(rs.getString("d_id"));
+					depot.setdVarietyNum(rs.getInt("d_variety_num"));
+					depot.setdTotalPrice(rs.getInt("d_total_price"));
+					depot.setdDate(rs.getString("d_date"));
+					depot.setdSettlementWay(rs.getString("d_settlement_way"));
+					
+					
+					if(rs.getInt("p_id") != 0) {
+						Goods goods = new Goods();
+						goods.setgId(rs.getInt("goods_id"));
+						
+						Purchase purchase = new Purchase();
+						purchase.setpId(rs.getInt("p_id"));
+						purchase.setGoodsPrice(rs.getInt("goods_price"));
+						purchase.setGoodsNumber(rs.getInt("goods_number"));
+						purchase.setGoodsId(goods);
+						depot.getPurchases().add(purchase);
+					}
+					
+					
+				}else {
+					if(rs.getInt("p_id") != 0) {
+						Goods goods = new Goods();
+						goods.setgId(rs.getInt("goods_id"));
+						
+						Purchase purchase = new Purchase();
+						purchase.setpId(rs.getInt("p_id"));
+						purchase.setGoodsPrice(rs.getInt("goods_price"));
+						purchase.setGoodsNumber(rs.getInt("goods_number"));
+						purchase.setGoodsId(goods);
+						depot.getPurchases().add(purchase);
+					}
+				}
 			}
 			return depot;
 		} catch (SQLException e) {
@@ -164,7 +215,7 @@ public class DepotDao {
 		List<Depot> list = new ArrayList<Depot>();
 		try {
 			conn.setAutoCommit(false);
-			ps = conn.prepareStatement("SELECT * FROM `depot` d LEFT JOIN purchase p ON d.d_id = p.depot_id  LEFT JOIN goods g ON g.g_id = p.goods_id");
+			ps = conn.prepareStatement("SELECT * FROM `depot` d LEFT JOIN purchase p ON d.d_id = p.depot_id  LEFT JOIN goods g ON g.g_id = p.goods_id order by d.d_date");
 			rs = ps.executeQuery();
 			conn.commit();
 			while (rs.next()) {
@@ -175,6 +226,46 @@ public class DepotDao {
 				for (Depot depot : list) {
 					if(rs.getString("d_id").equals(depot.getdId())) {
 						//如果当前遍历到的进货单已经被添加了，就只添加其他属性
+						if(rs.getInt("p_id") != 0) {
+							Goods goods = new Goods();
+							goods.setgId(rs.getInt("g_id"));
+							goods.setgName(rs.getString("g_name"));
+							goods.setgNumber(rs.getInt("g_number"));
+							goods.setgProduce(rs.getString("g_produce"));
+							goods.setgProductionDate(rs.getDate("g_production_date"));
+							goods.setgReleaseDate(rs.getDate("g_release_date"));
+							goods.setgType(rs.getString("g_type"));
+							goods.setgUnit(rs.getString("g_unit"));
+							goods.setgRemark(rs.getString("g_remark"));
+							goods.setgSupplier(rs.getString("g_supplier"));
+							
+							
+							Purchase purchase = new Purchase();
+							purchase.setpId(rs.getInt("p_id"));
+							purchase.setGoodsPrice(rs.getInt("goods_price"));
+							purchase.setGoodsNumber(rs.getInt("goods_number"));
+							purchase.setGoodsId(goods);
+							
+							depot.getPurchases().add(purchase);
+						}
+						flag = true;
+						//填完就退出循环，因为当前这一条数据已经被添加了
+						break;
+					}
+				}
+				
+				//当第一次循环时，list还没有数据，会进入这个方法
+				//当上面循环过后，还没有添加，就进入这个方法
+				if(list == null || list.size()==0 || flag == false) {
+					//如果当前遍历到的进货单还没有被添加，添加进货单
+					Depot depot1 = new Depot();
+					depot1.setdId(rs.getString("d_id"));
+					depot1.setdVarietyNum(rs.getInt("d_variety_num"));
+					depot1.setdTotalPrice(rs.getInt("d_total_price"));
+					depot1.setdDate(rs.getString("d_date"));
+					depot1.setdSettlementWay(rs.getString("d_settlement_way"));
+					
+					if(rs.getInt("p_id") != 0) {
 						Goods goods = new Goods();
 						goods.setgId(rs.getInt("g_id"));
 						goods.setgName(rs.getString("g_name"));
@@ -188,51 +279,15 @@ public class DepotDao {
 						goods.setgSupplier(rs.getString("g_supplier"));
 						
 						
+						
 						Purchase purchase = new Purchase();
 						purchase.setpId(rs.getInt("p_id"));
 						purchase.setGoodsPrice(rs.getInt("goods_price"));
 						purchase.setGoodsNumber(rs.getInt("goods_number"));
 						purchase.setGoodsId(goods);
-						
-						depot.getPurchases().add(purchase);
-						flag = true;
-						//填完就退出循环，因为当前这一条数据已经被添加了
-						break;
+						depot1.getPurchases().add(purchase);
 					}
-				}
-				
-				//当第一次循环时，list还没有数据，会进入这个方法
-				//当上面循环过后，还没有添加，就进入这个方法
-				if(list == null || list.size()==0 || flag == false) {
-					//如果当前遍历到的进货单还没有被添加，添加进货单
-					Goods goods = new Goods();
-					goods.setgId(rs.getInt("g_id"));
-					goods.setgName(rs.getString("g_name"));
-					goods.setgNumber(rs.getInt("g_number"));
-					goods.setgProduce(rs.getString("g_produce"));
-					goods.setgProductionDate(rs.getDate("g_production_date"));
-					goods.setgReleaseDate(rs.getDate("g_release_date"));
-					goods.setgType(rs.getString("g_type"));
-					goods.setgUnit(rs.getString("g_unit"));
-					goods.setgRemark(rs.getString("g_remark"));
-					goods.setgSupplier(rs.getString("g_supplier"));
 					
-					
-					
-					Purchase purchase = new Purchase();
-					purchase.setpId(rs.getInt("p_id"));
-					purchase.setGoodsPrice(rs.getInt("goods_price"));
-					purchase.setGoodsNumber(rs.getInt("goods_number"));
-					purchase.setGoodsId(goods);
-					
-					
-					Depot depot1 = new Depot();
-					depot1.setdId(rs.getString("d_id"));
-					depot1.setdVarietyNum(rs.getInt("d_variety_num"));
-					depot1.setdTotalPrice(rs.getInt("d_total_price"));
-					depot1.setdDate(rs.getString("d_date"));
-					depot1.setdSettlementWay(rs.getString("d_settlement_way"));
-					depot1.getPurchases().add(purchase);
 					list.add(depot1);
 				}
 				
@@ -268,6 +323,12 @@ public class DepotDao {
 				ps.setObject(2,purchases.get(i).getGoodsId().getgId());
 				ps.setObject(3, purchases.get(i).getGoodsPrice());
 				ps.setObject(4, purchases.get(i).getGoodsNumber());
+				ps.executeUpdate();
+				
+				//同时修改数量商品数量
+				ps = conn.prepareStatement("UPDATE `goods` SET g_number=g_number+? WHERE g_id=?");
+				ps.setObject(1, purchases.get(i).getGoodsNumber());
+				ps.setObject(2,purchases.get(i).getGoodsId().getgId());
 				ps.executeUpdate();
 			}
 			

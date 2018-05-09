@@ -84,16 +84,13 @@ public class DepotController extends HttpServlet{
 		Depot depot = new Depot();
 		Object value = null;
 		
-		
 		String dId = req.getParameter("dId");
 		depot.setdId(dId);
-		
 		
 		String dVarietyNum = req.getParameter("dVarietyNum");
 		if(dVarietyNum != null){
 			value = Integer.valueOf(dVarietyNum);
 		}
-		
 		depot.setdVarietyNum((Integer)value);
 		
 		
@@ -118,15 +115,22 @@ public class DepotController extends HttpServlet{
 		
 		depot.setdSettlementWay((String)value);
 		
-		
-		String supplierId = req.getParameter("supplierId");
-		if(supplierId != null){
-			value = Integer.valueOf(supplierId);
+		String[] gIds = req.getParameterValues("gId");
+		String[] goodsPrice = req.getParameterValues("goodsPrice");
+		String[] goodsNumber = req.getParameterValues("goodsNumber");
+		if(gIds != null) {
+			for (int i=0;i< gIds.length;i++) {
+				Purchase p = new Purchase();
+				
+				Goods g = new Goods();
+				g.setgId(Integer.parseInt(gIds[i]));
+				p.setGoodsId(g);
+				
+				p.setGoodsPrice((int) (Double.valueOf(goodsPrice[i]) * 100));
+				p.setGoodsNumber(Integer.valueOf(goodsNumber[i]));
+				depot.getPurchases().add(p);
+			}
 		}
-		
-		
-		String supplierName = req.getParameter("supplierName");
-		value = supplierName;
 		
 		
 		service.update(depot);
@@ -147,8 +151,11 @@ public class DepotController extends HttpServlet{
 		
 		depot = service.findOne(depot);
 		req.setAttribute("depot",depot);
+		
+		List<Goods> goods = goodsService.findAll();
+		req.setAttribute("goods", goods);
 		try {
-			req.getRequestDispatcher("/修改页面").forward(req, resp);
+			req.getRequestDispatcher("/html/depot_update.jsp").forward(req, resp);
 		} catch (ServletException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

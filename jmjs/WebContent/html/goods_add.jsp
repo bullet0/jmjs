@@ -10,14 +10,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <title>Document</title>
     <link href="<%=request.getContextPath()%>/bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet" />
-
+	<link href="<%=request.getContextPath() %>/bootstrap-3.3.7-dist/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />  
+	
     <!--[if lt IE 9]>
      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <style>
-
-    </style>
+    
 </head>
 
 <body>
@@ -46,11 +45,11 @@
                 </div>
                 <div class="form-group col-md-6">
                     <label for="gNumber">商品数量</label>
-                    <input type="text" class="form-control" name="gNumber" id="gNumber" placeholder="请输入商品数量">
+                    <input type="text" readonly="readonly" class="form-control" name="gNumber" id="gNumber" value="0">
                 </div>
                 <div class="form-group col-md-6">
                     <label for="gProduce">商品产地</label>
-                    <input type="text" class="form-control" name="gProduce" id="gProduce" placeholder="请输入商品数量">
+                    <input type="text" class="form-control" name="gProduce" id="gProduce" placeholder="请输入商品产地">
                 </div>
                 <div class="form-group col-md-6">
                     <label for="gProductionDate">商品生产日期</label>
@@ -78,6 +77,7 @@
                         </select>
                     </div>
                 </div>
+                
                 <div class="col-md-12">
 	                <div class="form-group">
 					    <label for="gRemark">备注</label>
@@ -106,6 +106,8 @@
 
     <script src="<%=request.getContextPath()%>/bootstrap-3.3.7-dist/js/jquery-3.1.1.min.js"></script>
     <script src="<%=request.getContextPath()%>/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+    <script src="<%=request.getContextPath() %>/bootstrap-3.3.7-dist/js/moment.js"></script>
+    <script src="<%=request.getContextPath() %>/bootstrap-3.3.7-dist/js/bootstrap-datetimepicker.min.js"></script>
     <script>
 		/*
         $('input[id=lefile]').change(function () {
@@ -115,7 +117,16 @@
 		function save(){
 			$("#form1").submit();
 		}
-        
+		$(function () {  
+		    $('#datetimepicker1').datetimepicker({  
+		          format: 'YYYY-MM-DD',  
+		          locale: moment.locale('zh-cn')  
+		    });  
+		    $('#datetimepicker2').datetimepicker({  
+		          format: 'YYYY-MM-DD',  
+		          locale: moment.locale('zh-cn')  
+		    });  
+		}); 
         
     </script>
 </body>

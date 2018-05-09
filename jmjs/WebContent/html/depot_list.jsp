@@ -129,6 +129,7 @@
                                 </td>
                                 <td>
                                     <a href="javascript:findOne('${depot.dId}')">查看明细</a>
+                                    <a href="javascript:toUpdate('${depot.dId}')">修改</a>
                                 </td>
                         </tr>
                         </c:forEach>
@@ -179,7 +180,7 @@
         }
 
         function toUpdate(id) {
-            window.location = "<%=request.getContextPath() %>/supplierController?method=toUpdate&sId="+id;
+            window.location = "<%=request.getContextPath() %>/depotController?method=toUpdate&dId="+id;
         }
         
         function deleteAll(){
