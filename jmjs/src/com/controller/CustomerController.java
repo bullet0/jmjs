@@ -20,7 +20,7 @@ public class CustomerController extends HttpServlet{
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		req.setCharacterEncoding("utf-8");
 		resp.setContentType("text/html;charset=utf-8");
-		
+		 
 		String method = req.getParameter("method");
 		
 		if("findAll".equals(method)) {
