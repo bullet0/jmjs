@@ -26,4 +26,8 @@ public class PurchaseService {
 	public List<Purchase> findAll() {
 		return dao.findAll();
 	}
+	public void deleteAll(String[] pIds) {
+		dao.deleteAll(pIds);
+	}
+	
 }

@@ -26,4 +26,8 @@ public class GoodsService {
 	public List<Goods> findAll() {
 		return dao.findAll();
 	}
+	public void deleteAll(String[] gIds) {
+		dao.deleteAll(gIds);
+	}
+	
 }

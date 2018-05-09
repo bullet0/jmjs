@@ -26,4 +26,8 @@ public class StorageService {
 	public List<Storage> findAll() {
 		return dao.findAll();
 	}
+	public void deleteAll(String[] sIds) {
+		dao.deleteAll(sIds);
+	}
+	
 }

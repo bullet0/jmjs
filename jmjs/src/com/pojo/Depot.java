@@ -1,35 +1,49 @@
 package com.pojo;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Depot{
 
-	private Integer dId;
+	private String dId;
 	private Integer dVarietyNum;
 	private Integer dTotalPrice;
 	private String dDate;
 	private String dSettlementWay;
-	private Integer supplierId;
-	private String supplierName;
+	private List<Purchase>  purchases = new ArrayList<>();
+	
+	
+	
+	
+	/**
+	 * @return the purchases
+	 */
+	public List<Purchase> getPurchases() {
+		return purchases;
+	}
 
+	/**
+	 * @param purchases the purchases to set
+	 */
+	public void setPurchases(List<Purchase> purchases) {
+		this.purchases = purchases;
+	}
 
-	
-	
-	
-	public Integer getdId() {
+	/**
+	 * @return the dId
+	 */
+	public String getdId() {
 		return dId;
 	}
 
-	public void setdId(Integer dId) {
+	/**
+	 * @param dId the dId to set
+	 */
+	public void setdId(String dId) {
 		this.dId = dId;
 	}
-	
-	
-	
-	
-	
-	
-	
+
 	public Integer getdVarietyNum() {
 		return dVarietyNum;
 	}
@@ -79,36 +93,7 @@ public class Depot{
 	public void setdSettlementWay(String dSettlementWay) {
 		this.dSettlementWay = dSettlementWay;
 	}
-	
-	
-	
-	
-	
-	
-	
-	public Integer getSupplierId() {
-		return supplierId;
-	}
 
-	public void setSupplierId(Integer supplierId) {
-		this.supplierId = supplierId;
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	public String getSupplierName() {
-		return supplierName;
-	}
-
-	public void setSupplierName(String supplierName) {
-		this.supplierName = supplierName;
-	}
-	
 	
 	
 	

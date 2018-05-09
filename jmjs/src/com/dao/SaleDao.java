@@ -73,6 +73,27 @@ public class SaleDao {
 		}
 	}
 
+
+	public void deleteAll(String[] sIds) {
+		Connection conn = this.getConnection();
+		PreparedStatement ps = null;
+		try {
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement("delete from sale where s_Id = ?");
+			for (String sId : sIds) {
+				ps.setObject(1, sId);
+				ps.addBatch();
+			}
+			ps.executeBatch();
+			conn.commit();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			this.close(conn,ps,null);
+		}
+	}
+
 	public void update(Sale sale) {
 		Connection conn = this.getConnection();
 		PreparedStatement ps = null;

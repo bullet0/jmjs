@@ -1,8 +1,11 @@
 package com.service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
 import com.dao.DepotDao;
 import com.pojo.Depot;
-import java.util.List;
 
 public class DepotService {
 	private DepotDao dao = new DepotDao();
@@ -20,10 +23,23 @@ public class DepotService {
 	}
 
 	public void add(Depot depot) {
+		
+		//生成订单号
+		String dId = this.getNo();
+		depot.setdId(dId);
+		
 		dao.add(depot);
 	}
 
 	public List<Depot> findAll() {
 		return dao.findAll();
+	}
+	public void deleteAll(String[] dIds) {
+		dao.deleteAll(dIds);
+	}
+	private String getNo() {
+		SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmssSSS"); // 时间字符串产生方式
+        String uid_pfix = "NO." + format.format(new Date());
+        return uid_pfix;
 	}
 }

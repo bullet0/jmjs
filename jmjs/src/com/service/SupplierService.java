@@ -26,4 +26,8 @@ public class SupplierService {
 	public List<Supplier> findAll() {
 		return dao.findAll();
 	}
+	public void deleteAll(String[] sIds) {
+		dao.deleteAll(sIds);
+	}
+	
 }

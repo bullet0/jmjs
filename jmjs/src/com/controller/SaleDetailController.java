@@ -34,6 +34,8 @@ public class SaleDetailController extends HttpServlet{
 			this.update(req,resp);
 		}else if("delete".equals(method)){
 			this.delete(req,resp);
+		}else if("deleteAll".equals(method)){
+			this.deleteAll(req,resp);
 		}else{
 			System.out.println("用户请求路径有误");
 			resp.sendRedirect("404.jsp");
@@ -66,6 +68,19 @@ public class SaleDetailController extends HttpServlet{
 			e.printStackTrace();
 		}
 	}
+	private void deleteAll(HttpServletRequest req, HttpServletResponse resp) {
+		String[] sdIds = req.getParameterValues("sdId");
+		if(sdIds != null) {
+			service.deleteAll(sdIds);
+		} 
+		try {
+			resp.sendRedirect(req.getContextPath()+"/saleDetailController?method=findAll");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 
 	private void update(HttpServletRequest req, HttpServletResponse resp) {
 		SaleDetail saleDetail = new SaleDetail();

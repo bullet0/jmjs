@@ -7,7 +7,8 @@
         <meta http-equiv = "X-UA-Compatible" content = "IE=edge,chrome=1"/>
         <title>Document</title>
         <link href="../bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet" />
-    
+    	<link rel="stylesheet" href="/jmjs/bootstrap-3.3.7-dist/css/reset.css">
+		<link rel="stylesheet" href="/jmjs/bootstrap-3.3.7-dist/css/style.css">
         <!--[if lt IE 9]>
          <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
          <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
@@ -22,9 +23,28 @@
 </head>
 
 <body>
-
-
-
+  <div class="card-container-6">
+    <div class="card">
+      <h1>1</h1>
+    </div>
+    <div class="card">
+      <h1>2</h1>
+    </div>
+    <div class="card">
+      <h1>3</h1>
+    </div>
+  </div>
+  
+	<script src="/jmjs/bootstrap-3.3.7-dist/js/jquery-3.1.1.min.js"></script>
+<script>
+	var cc6 = $('.card-container-6'),
+    		cssAppear = {
+      		opacity: 0
+    	}
+	cc6.children('.card').click(function(e){
+  		cc6.prepend($(this)); 
+	})
+</script>
 </body>
 
 </html>

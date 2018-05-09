@@ -73,6 +73,27 @@ public class PurchaseDao {
 		}
 	}
 
+
+	public void deleteAll(String[] pIds) {
+		Connection conn = this.getConnection();
+		PreparedStatement ps = null;
+		try {
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement("delete from purchase where p_Id = ?");
+			for (String pId : pIds) {
+				ps.setObject(1, pId);
+				ps.addBatch();
+			}
+			ps.executeBatch();
+			conn.commit();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			this.close(conn,ps,null);
+		}
+	}
+
 	public void update(Purchase purchase) {
 		Connection conn = this.getConnection();
 		PreparedStatement ps = null;
@@ -111,8 +132,8 @@ public class PurchaseDao {
 			while (rs.next()) {
 				purchase = new Purchase();
 				purchase.setpId(rs.getInt("p_id"));
-				purchase.setDepotId(rs.getInt("depot_id"));
-				purchase.setGoodsId(rs.getInt("goods_id"));
+//				purchase.setDepotId(rs.getInt("depot_id"));
+//				purchase.setGoodsId(rs.getInt("goods_id"));
 				purchase.setGoodsPrice(rs.getInt("goods_price"));
 				purchase.setGoodsNumber(rs.getInt("goods_number"));
 			}
@@ -141,9 +162,9 @@ public class PurchaseDao {
 				
 				purchase.setpId(rs.getInt("p_id"));
 				
-				purchase.setDepotId(rs.getInt("depot_id"));
-				
-				purchase.setGoodsId(rs.getInt("goods_id"));
+//				purchase.setDepotId(rs.getInt("depot_id"));
+//				
+//				purchase.setGoodsId(rs.getInt("goods_id"));
 				
 				purchase.setGoodsPrice(rs.getInt("goods_price"));
 				

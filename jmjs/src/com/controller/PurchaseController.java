@@ -34,6 +34,8 @@ public class PurchaseController extends HttpServlet{
 			this.update(req,resp);
 		}else if("delete".equals(method)){
 			this.delete(req,resp);
+		}else if("deleteAll".equals(method)){
+			this.deleteAll(req,resp);
 		}else{
 			System.out.println("用户请求路径有误");
 			resp.sendRedirect("404.jsp");
@@ -66,6 +68,19 @@ public class PurchaseController extends HttpServlet{
 			e.printStackTrace();
 		}
 	}
+	private void deleteAll(HttpServletRequest req, HttpServletResponse resp) {
+		String[] pIds = req.getParameterValues("pId");
+		if(pIds != null) {
+			service.deleteAll(pIds);
+		} 
+		try {
+			resp.sendRedirect(req.getContextPath()+"/purchaseController?method=findAll");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 
 	private void update(HttpServletRequest req, HttpServletResponse resp) {
 		Purchase purchase = new Purchase();
@@ -85,7 +100,6 @@ public class PurchaseController extends HttpServlet{
 			value = Integer.valueOf(depotId);
 		}
 		
-		purchase.setDepotId((Integer)value);
 		
 		
 		String goodsId = req.getParameter("goodsId");
@@ -93,7 +107,6 @@ public class PurchaseController extends HttpServlet{
 			value = Integer.valueOf(goodsId);
 		}
 		
-		purchase.setGoodsId((Integer)value);
 		
 		
 		String goodsPrice = req.getParameter("goodsPrice");
@@ -162,7 +175,6 @@ public class PurchaseController extends HttpServlet{
 			value = Integer.valueOf(depotId);
 		}
 		
-		purchase.setDepotId((Integer)value);
 		
 		
 		String goodsId = req.getParameter("goodsId");
@@ -170,7 +182,6 @@ public class PurchaseController extends HttpServlet{
 			value = Integer.valueOf(goodsId);
 		}
 		
-		purchase.setGoodsId((Integer)value);
 		
 		
 		String goodsPrice = req.getParameter("goodsPrice");

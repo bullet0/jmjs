@@ -26,4 +26,8 @@ public class CustomerService {
 	public List<Customer> findAll() {
 		return dao.findAll();
 	}
+	public void deleteAll(String[] cIds) {
+		dao.deleteAll(cIds);
+	}
+	
 }

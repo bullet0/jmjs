@@ -5,8 +5,8 @@ import java.sql.Date;
 public class Purchase{
 
 	private Integer pId;
-	private Integer depotId;
-	private Integer goodsId;
+	private Depot depotId;
+	private Goods goodsId;
 	private Integer goodsPrice;
 	private Integer goodsNumber;
 
@@ -24,40 +24,34 @@ public class Purchase{
 	
 	
 	
-	
-	
-	
-	
-	public Integer getDepotId() {
+	/**
+	 * @return the depotId
+	 */
+	public Depot getDepotId() {
 		return depotId;
 	}
 
-	public void setDepotId(Integer depotId) {
+	/**
+	 * @param depotId the depotId to set
+	 */
+	public void setDepotId(Depot depotId) {
 		this.depotId = depotId;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	public Integer getGoodsId() {
+
+	/**
+	 * @return the goodsId
+	 */
+	public Goods getGoodsId() {
 		return goodsId;
 	}
 
-	public void setGoodsId(Integer goodsId) {
+	/**
+	 * @param goodsId the goodsId to set
+	 */
+	public void setGoodsId(Goods goodsId) {
 		this.goodsId = goodsId;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
 	public Integer getGoodsPrice() {
 		return goodsPrice;
 	}

@@ -34,6 +34,8 @@ public class StorageController extends HttpServlet{
 			this.update(req,resp);
 		}else if("delete".equals(method)){
 			this.delete(req,resp);
+		}else if("deleteAll".equals(method)){
+			this.deleteAll(req,resp);
 		}else{
 			System.out.println("用户请求路径有误");
 			resp.sendRedirect("404.jsp");
@@ -66,6 +68,19 @@ public class StorageController extends HttpServlet{
 			e.printStackTrace();
 		}
 	}
+	private void deleteAll(HttpServletRequest req, HttpServletResponse resp) {
+		String[] sIds = req.getParameterValues("sId");
+		if(sIds != null) {
+			service.deleteAll(sIds);
+		} 
+		try {
+			resp.sendRedirect(req.getContextPath()+"/storageController?method=findAll");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 
 	private void update(HttpServletRequest req, HttpServletResponse resp) {
 		Storage storage = new Storage();

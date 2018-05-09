@@ -3,6 +3,7 @@ package com.controller;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,7 +13,7 @@ import com.pojo.Supplier;
 import java.sql.Date;
 import java.util.List;
 import java.text.ParseException;
-
+@WebServlet("/supplierController")
 public class SupplierController extends HttpServlet{
 	private SupplierService service = new SupplierService();
 	@Override
@@ -34,6 +35,8 @@ public class SupplierController extends HttpServlet{
 			this.update(req,resp);
 		}else if("delete".equals(method)){
 			this.delete(req,resp);
+		}else if("deleteAll".equals(method)){
+			this.deleteAll(req,resp);
 		}else{
 			System.out.println("用户请求路径有误");
 			resp.sendRedirect("404.jsp");
@@ -66,6 +69,19 @@ public class SupplierController extends HttpServlet{
 			e.printStackTrace();
 		}
 	}
+	private void deleteAll(HttpServletRequest req, HttpServletResponse resp) {
+		String[] sIds = req.getParameterValues("sId");
+		if(sIds != null) {
+			service.deleteAll(sIds);
+		} 
+		try {
+			resp.sendRedirect(req.getContextPath()+"/supplierController?method=findAll");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 
 	private void update(HttpServletRequest req, HttpServletResponse resp) {
 		Supplier supplier = new Supplier();
@@ -159,7 +175,7 @@ public class SupplierController extends HttpServlet{
 		supplier = service.findOne(supplier);
 		req.setAttribute("supplier",supplier);
 		try {
-			req.getRequestDispatcher("/修改页面").forward(req, resp);
+			req.getRequestDispatcher("/html/supplier_update.jsp").forward(req, resp);
 		} catch (ServletException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -257,7 +273,7 @@ public class SupplierController extends HttpServlet{
 		List<Supplier> suppliers = service.findAll();
 		req.setAttribute("suppliers",suppliers);
 		try {
-			req.getRequestDispatcher("/查询页面").forward(req, resp);
+			req.getRequestDispatcher("/html/supplier_list.jsp").forward(req, resp);
 		} catch (ServletException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

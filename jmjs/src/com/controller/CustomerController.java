@@ -3,6 +3,7 @@ package com.controller;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,7 +13,7 @@ import com.pojo.Customer;
 import java.sql.Date;
 import java.util.List;
 import java.text.ParseException;
-
+@WebServlet("/customerController")
 public class CustomerController extends HttpServlet{
 	private CustomerService service = new CustomerService();
 	@Override
@@ -34,6 +35,8 @@ public class CustomerController extends HttpServlet{
 			this.update(req,resp);
 		}else if("delete".equals(method)){
 			this.delete(req,resp);
+		}else if("deleteAll".equals(method)){
+			this.deleteAll(req,resp);
 		}else{
 			System.out.println("用户请求路径有误");
 			resp.sendRedirect("404.jsp");
@@ -66,6 +69,19 @@ public class CustomerController extends HttpServlet{
 			e.printStackTrace();
 		}
 	}
+	private void deleteAll(HttpServletRequest req, HttpServletResponse resp) {
+		String[] cIds = req.getParameterValues("cId");
+		if(cIds != null) {
+			service.deleteAll(cIds);
+		} 
+		try {
+			resp.sendRedirect(req.getContextPath()+"/customerController?method=findAll");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 
 	private void update(HttpServletRequest req, HttpServletResponse resp) {
 		Customer customer = new Customer();
@@ -135,6 +151,8 @@ public class CustomerController extends HttpServlet{
 		
 		customer.setcAccount((String)value);
 		
+		
+		
 		service.update(customer);
 		try {
 			resp.sendRedirect(req.getContextPath()+"/customerController?method=findAll");
@@ -159,14 +177,14 @@ public class CustomerController extends HttpServlet{
 		customer = service.findOne(customer);
 		req.setAttribute("customer",customer);
 		try {
-			req.getRequestDispatcher("/修改页面").forward(req, resp);
+			req.getRequestDispatcher("/html/customer_update.jsp").forward(req, resp);
 		} catch (ServletException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}    
 	}
 
 	private void add(HttpServletRequest req, HttpServletResponse resp) {
@@ -257,7 +275,7 @@ public class CustomerController extends HttpServlet{
 		List<Customer> customers = service.findAll();
 		req.setAttribute("customers",customers);
 		try {
-			req.getRequestDispatcher("/查询页面").forward(req, resp);
+			req.getRequestDispatcher("/html/customers_list.jsp").forward(req, resp);
 		} catch (ServletException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

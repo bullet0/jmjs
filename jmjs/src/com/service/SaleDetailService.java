@@ -26,4 +26,8 @@ public class SaleDetailService {
 	public List<SaleDetail> findAll() {
 		return dao.findAll();
 	}
+	public void deleteAll(String[] sdIds) {
+		dao.deleteAll(sdIds);
+	}
+	
 }

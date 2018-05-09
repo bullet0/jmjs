@@ -1,20 +1,23 @@
 package com.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.text.SimpleDateFormat;
-import com.service.DepotService;
-import com.pojo.Depot;
-import java.sql.Date;
-import java.util.List;
-import java.text.ParseException;
 
+import com.pojo.Depot;
+import com.pojo.Goods;
+import com.pojo.Purchase;
+import com.service.DepotService;
+import com.service.GoodsService;
+@WebServlet("/depotController")
 public class DepotController extends HttpServlet{
 	private DepotService service = new DepotService();
+	private GoodsService goodsService = new GoodsService();
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		req.setCharacterEncoding("utf-8");
@@ -34,6 +37,8 @@ public class DepotController extends HttpServlet{
 			this.update(req,resp);
 		}else if("delete".equals(method)){
 			this.delete(req,resp);
+		}else if("deleteAll".equals(method)){
+			this.deleteAll(req,resp);
 		}else{
 			System.out.println("用户请求路径有误");
 			resp.sendRedirect("404.jsp");
@@ -50,14 +55,9 @@ public class DepotController extends HttpServlet{
 		
 		String dId = req.getParameter("dId");
 		
-		if(dId != null){
-			value = Integer.valueOf(dId);
-		}
-		
-		
 		Depot depot = new Depot();
 		
-		depot.setdId((Integer)value);
+		depot.setdId(dId);
 		service.delete(depot);
 		try {
 			resp.sendRedirect(req.getContextPath()+"/depotController?method=findAll");
@@ -66,6 +66,19 @@ public class DepotController extends HttpServlet{
 			e.printStackTrace();
 		}
 	}
+	private void deleteAll(HttpServletRequest req, HttpServletResponse resp) {
+		String[] dIds = req.getParameterValues("dId");
+		if(dIds != null) {
+			service.deleteAll(dIds);
+		} 
+		try {
+			resp.sendRedirect(req.getContextPath()+"/depotController?method=findAll");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 
 	private void update(HttpServletRequest req, HttpServletResponse resp) {
 		Depot depot = new Depot();
@@ -73,11 +86,7 @@ public class DepotController extends HttpServlet{
 		
 		
 		String dId = req.getParameter("dId");
-		if(dId != null){
-			value = Integer.valueOf(dId);
-		}
-		
-		depot.setdId((Integer)value);
+		depot.setdId(dId);
 		
 		
 		String dVarietyNum = req.getParameter("dVarietyNum");
@@ -115,14 +124,10 @@ public class DepotController extends HttpServlet{
 			value = Integer.valueOf(supplierId);
 		}
 		
-		depot.setSupplierId((Integer)value);
-		
 		
 		String supplierName = req.getParameter("supplierName");
 		value = supplierName;
 		
-		
-		depot.setSupplierName((String)value);
 		
 		service.update(depot);
 		try {
@@ -133,17 +138,12 @@ public class DepotController extends HttpServlet{
 	}
 
 	private void toUpdate(HttpServletRequest req, HttpServletResponse resp) {
-		Object value = null;
 		
 		String dId = req.getParameter("dId");
 		
-		if(dId != null){
-			value = Integer.valueOf(dId);
-		}
-		
 		Depot depot = new Depot();
 		
-		depot.setdId((Integer)value);
+		depot.setdId(dId);
 		
 		depot = service.findOne(depot);
 		req.setAttribute("depot",depot);
@@ -162,19 +162,10 @@ public class DepotController extends HttpServlet{
 		Depot depot = new Depot();
 		Object value = null;
 		
-		String dId = req.getParameter("dId");
-		if(dId != null){
-			value = Integer.valueOf(dId);
-		}
-		
-		depot.setdId((Integer)value);
-		
-		
 		String dVarietyNum = req.getParameter("dVarietyNum");
 		if(dVarietyNum != null){
 			value = Integer.valueOf(dVarietyNum);
 		}
-		
 		depot.setdVarietyNum((Integer)value);
 		
 		
@@ -199,20 +190,23 @@ public class DepotController extends HttpServlet{
 		
 		depot.setdSettlementWay((String)value);
 		
-		
-		String supplierId = req.getParameter("supplierId");
-		if(supplierId != null){
-			value = Integer.valueOf(supplierId);
+		String[] gIds = req.getParameterValues("gId");
+		String[] goodsPrice = req.getParameterValues("goodsPrice");
+		String[] goodsNumber = req.getParameterValues("goodsNumber");
+		if(gIds != null) {
+			for (int i=0;i< gIds.length;i++) {
+				Purchase p = new Purchase();
+				
+				Goods g = new Goods();
+				g.setgId(Integer.parseInt(gIds[i]));
+				p.setGoodsId(g);
+				
+				p.setGoodsPrice((int) (Double.valueOf(goodsPrice[i]) * 100));
+				p.setGoodsNumber(Integer.valueOf(goodsNumber[i]));
+				depot.getPurchases().add(p);
+			}
 		}
 		
-		depot.setSupplierId((Integer)value);
-		
-		
-		String supplierName = req.getParameter("supplierName");
-		value = supplierName;
-		
-		
-		depot.setSupplierName((String)value);
 		
 		
 		service.add(depot);
@@ -224,9 +218,12 @@ public class DepotController extends HttpServlet{
 	}
 
 	private void toAdd(HttpServletRequest req, HttpServletResponse resp) {
+		List<Goods> goods = goodsService.findAll();
+		req.setAttribute("goods", goods);
 		try {
-			resp.sendRedirect(req.getContextPath()+"/添加页面");
-		} catch (IOException e) {
+			req.getRequestDispatcher("/html/depot_add.jsp").forward(req, resp);
+		} catch (ServletException | IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -235,7 +232,7 @@ public class DepotController extends HttpServlet{
 		List<Depot> depots = service.findAll();
 		req.setAttribute("depots",depots);
 		try {
-			req.getRequestDispatcher("/查询页面").forward(req, resp);
+			req.getRequestDispatcher("/html/depot_list.jsp").forward(req, resp);
 		} catch (ServletException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

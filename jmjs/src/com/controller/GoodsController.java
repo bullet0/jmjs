@@ -3,18 +3,23 @@ package com.controller;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import com.service.GoodsService;
+import com.service.SupplierService;
 import com.pojo.Goods;
+import com.pojo.Supplier;
+
 import java.sql.Date;
 import java.util.List;
 import java.text.ParseException;
-
+@WebServlet("/goodsController")
 public class GoodsController extends HttpServlet{
 	private GoodsService service = new GoodsService();
+	private SupplierService supplierService = new SupplierService();
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		req.setCharacterEncoding("utf-8");
@@ -34,6 +39,8 @@ public class GoodsController extends HttpServlet{
 			this.update(req,resp);
 		}else if("delete".equals(method)){
 			this.delete(req,resp);
+		}else if("deleteAll".equals(method)){
+			this.deleteAll(req,resp);
 		}else{
 			System.out.println("用户请求路径有误");
 			resp.sendRedirect("404.jsp");
@@ -66,6 +73,19 @@ public class GoodsController extends HttpServlet{
 			e.printStackTrace();
 		}
 	}
+	private void deleteAll(HttpServletRequest req, HttpServletResponse resp) {
+		String[] gIds = req.getParameterValues("gId");
+		if(gIds != null) {
+			service.deleteAll(gIds);
+		} 
+		try {
+			resp.sendRedirect(req.getContextPath()+"/goodsController?method=findAll");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 
 	private void update(HttpServletRequest req, HttpServletResponse resp) {
 		Goods goods = new Goods();
@@ -184,8 +204,11 @@ public class GoodsController extends HttpServlet{
 		
 		goods = service.findOne(goods);
 		req.setAttribute("goods",goods);
+		
+		List<Supplier> suppliers = supplierService.findAll();
+		req.setAttribute("suppliers", suppliers);
 		try {
-			req.getRequestDispatcher("/修改页面").forward(req, resp);
+			req.getRequestDispatcher("/html/goods_update.jsp").forward(req, resp);
 		} catch (ServletException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -298,18 +321,22 @@ public class GoodsController extends HttpServlet{
 	}
 
 	private void toAdd(HttpServletRequest req, HttpServletResponse resp) {
+		List<Supplier> suppliers = supplierService.findAll();
+		req.setAttribute("suppliers", suppliers);
+		
 		try {
-			resp.sendRedirect(req.getContextPath()+"/添加页面");
-		} catch (IOException e) {
+			req.getRequestDispatcher("/html/goods_add.jsp").forward(req, resp);
+		} catch (ServletException | IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	private void findAll(HttpServletRequest req, HttpServletResponse resp) {
-		List<Goods> goodss = service.findAll();
-		req.setAttribute("goodss",goodss);
+		List<Goods> goods = service.findAll();
+		req.setAttribute("goods",goods);
 		try {
-			req.getRequestDispatcher("/查询页面").forward(req, resp);
+			req.getRequestDispatcher("/html/goods_list.jsp").forward(req, resp);
 		} catch (ServletException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -73,6 +73,27 @@ public class CustomerDao {
 		}
 	}
 
+
+	public void deleteAll(String[] cIds) {
+		Connection conn = this.getConnection();
+		PreparedStatement ps = null;
+		try {
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement("delete from customer where c_Id = ?");
+			for (String cId : cIds) {
+				ps.setObject(1, cId);
+				ps.addBatch();
+			}
+			ps.executeBatch();
+			conn.commit();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			this.close(conn,ps,null);
+		}
+	}
+
 	public void update(Customer customer) {
 		Connection conn = this.getConnection();
 		PreparedStatement ps = null;
@@ -164,6 +185,7 @@ public class CustomerDao {
 				customer.setcPostCode(rs.getString("c_post_code"));
 				
 				customer.setcAccount(rs.getString("c_account"));
+				
 				list.add(customer);
 			}
 			return list;
