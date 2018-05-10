@@ -91,7 +91,7 @@
 						        					</c:if>
 						        				</c:forEach>
 											</td>
-			                                <td>${purchase.goodsPrice / 100}</td>
+			                                 <td>${purchase.goodsPrice / 100}</td>
 			                                <td>${purchase.goodsNumber}</td>
 			                            </tr>
 				        			</c:forEach>
