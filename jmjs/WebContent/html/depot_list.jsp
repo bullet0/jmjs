@@ -182,6 +182,9 @@
         function toUpdate(id) {
             window.location = "<%=request.getContextPath() %>/depotController?method=toUpdate&dId="+id;
         }
+        function findOne(id) {
+            window.location = "<%=request.getContextPath() %>/depotController?method=findOne&dId="+id;
+        }
         
         function deleteAll(){
         	$("#form1").submit();

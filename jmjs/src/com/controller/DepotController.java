@@ -39,12 +39,40 @@ public class DepotController extends HttpServlet{
 			this.delete(req,resp);
 		}else if("deleteAll".equals(method)){
 			this.deleteAll(req,resp);
+		}else if("findOne".equals(method)){
+			this.findOne(req,resp);
 		}else{
 			System.out.println("用户请求路径有误");
 			resp.sendRedirect("404.jsp");
 		}
 		
 		
+		
+	}
+
+
+
+	private void findOne(HttpServletRequest req, HttpServletResponse resp) {
+		String dId = req.getParameter("dId");
+		
+		Depot depot = new Depot();
+		
+		depot.setdId(dId);
+		
+		depot = service.findOne(depot);
+		req.setAttribute("depot",depot);
+		
+		List<Goods> goods = goodsService.findAll();
+		req.setAttribute("goods", goods);
+		try {
+			req.getRequestDispatcher("/html/depot_details.jsp").forward(req, resp);
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 

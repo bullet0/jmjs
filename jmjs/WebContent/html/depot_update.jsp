@@ -43,7 +43,10 @@
         </div>
         <div class="row">
             <form id="form1" action="<%=request.getContextPath() %>/depotController?method=update" method="post">
-                <input type="hidden" value="${depot.dId}" name="dId">
+                <div class="form-group col-md-6">
+                    <label for="dId">订单编号</label>
+                    <input type="text" readonly="readonly" class="form-control" name="dId" id="dId" value="${depot.dId}">
+                </div>
                 <div class="form-group col-md-6">
                     <label for="dVarietyNum">品种数量</label>
                     <input type="text" readonly="readonly" class="form-control" name="dVarietyNum" id="dVarietyNum" value="${depot.dVarietyNum}">
