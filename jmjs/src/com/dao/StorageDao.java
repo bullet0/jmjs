@@ -156,7 +156,7 @@ public class StorageDao {
 		List<Storage> list = new ArrayList<Storage>();
 		try {
 			conn.setAutoCommit(false);
-			ps = conn.prepareStatement("select * from storage");
+			ps = conn.prepareStatement("SELECT s_id,s_goods_name , s_supplier_name,IFNULL(s_price*s_stock_num,0) totalprice,s_type,s_stock_num FROM `storage` ORDER BY s_stock_num");
 			rs = ps.executeQuery();
 			conn.commit();
 			while (rs.next()) {
@@ -168,7 +168,7 @@ public class StorageDao {
 				
 				storage.setsSupplierName(rs.getString("s_supplier_name"));
 				
-				storage.setsPrice(rs.getInt("s_price"));
+				storage.setsPrice(rs.getInt("totalprice"));
 				
 				storage.setsType(rs.getString("s_type"));
 				

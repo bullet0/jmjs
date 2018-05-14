@@ -61,7 +61,7 @@ public class DepotController extends HttpServlet{
 		
 		depot = service.findOne(depot);
 		req.setAttribute("depot",depot);
-		
+		 
 		List<Goods> goods = goodsService.findAll();
 		req.setAttribute("goods", goods);
 		try {

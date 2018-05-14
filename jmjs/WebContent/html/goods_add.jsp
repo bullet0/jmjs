@@ -26,7 +26,7 @@
         <div class="row">
             <ul class="nav nav-tabs">
                 <li>
-                    <a href="<%=request.getContextPath() %>/goodsController?method=findAll">数据查询</a>
+                    <a href="<%=request.getContextPath() %>/goodsController?method=findAll&curPage=1">数据查询</a>
                 </li>
                 <li class="active">
                     <a href="javascript:void(0)">数据添加</a>
@@ -42,10 +42,6 @@
                 <div class="form-group col-md-6">
                     <label for="gName">商品名称</label>
                     <input type="text" class="form-control" name="gName" id="gName" placeholder="请输入商品名称">
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="gNumber">商品数量</label>
-                    <input type="text" readonly="readonly" class="form-control" name="gNumber" id="gNumber" value="0">
                 </div>
                 <div class="form-group col-md-6">
                     <label for="gProduce">商品产地</label>
@@ -67,6 +63,20 @@
                     <label for="gUnit">计量单位</label>
                     <input type="text" class="form-control" name="gUnit" id="gUnit" placeholder="请输入计量单位">
                 </div>
+                 <div class="form-group col-md-6">
+                    <label for="gAdvisePrice">建议价格</label>
+                    <input type="text" class="form-control" name="gAdvisePrice" id="gAdvisePrice" placeholder="请输入建议价格">
+                </div>
+               
+                <div class="form-group col-md-6">
+                    <label for="gSalePrice">零售价格</label>
+                    <input type="text" class="form-control" name="gSalePrice" id="gSalePrice" placeholder="请输入零售价格" >
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="gPromotionPrice">促销价格</label>
+                    <input type="text" class="form-control" name="gPromotionPrice" id="gPromotionPrice"  placeholder="请输入促销价格">
+                </div>
+               
                 <div class="form-group col-md-6">
                     <label for="gSupplier">供应商</label>
                     <div class="form-group">
@@ -77,7 +87,8 @@
                         </select>
                     </div>
                 </div>
-                
+               
+              
                 <div class="col-md-12">
 	                <div class="form-group">
 					    <label for="gRemark">备注</label>

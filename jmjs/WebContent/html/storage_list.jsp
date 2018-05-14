@@ -47,9 +47,6 @@
                 <li class="active">
                     <a href="javascript:void(0)">数据查询</a>
                 </li>
-                <li>
-                    <a href="javascript:toAdd()">数据添加</a>
-                </li>
             </ul>
         </div>
 
@@ -58,13 +55,7 @@
         <div class="row" style="margin-bottom: 20px">
             <!-- 表格上面的搜索框 -->
             <form action="tijiao biaodan" class="form-inline" role="form">
-                <div class="col-md-4">
-                    <a class="btn btn-default" type="button" onclick="toAdd()">
-                        <span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;添加</a>
-                    <a class="btn btn-danger" onclick="deleteAll()" type="button">
-                        <span class="glyphicon glyphicon-glyphicon glyphicon-trash"></span>&nbsp;&nbsp;全部删除</a>
-                </div>
-                <div class="col-md-4">
+                <div class="col-md-4  col-md-push-4">
                     <div class="input-group">
                         <div class="input-group-btn">
                             <select name="type" class="form-control">
@@ -97,41 +88,42 @@
                                         </label>
                                     </div>
                                 </th>
+                                <th>库存编号</th>
                                 <th>商品名称</th>
-                                <th>产地</th>
-                                <th>生产日期</th>
-                                <th>过期时间</th>
+                                <th>供应商名称</th>
+                                <th>商品总价</th>
                                 <th>商品类型</th>
-                                <th>计量单位</th>
-                                <th>供应商</th>
-                                <th>建议价格</th>
-                                <th>零售价</th>
-                                <th>促销价</th>
-                                <th>备注</th>
+                                <th>商品库存数量</th>
                                 <th class="text-center">操作</th>
                             </tr>
                         </thead>
                         <tbody>
-                        <c:forEach items="${pageUtil.list}" var="gs" varStatus="vs">
+                        <c:forEach items="${storages}" var="storage" varStatus="vs">
                          <tr>
                                 <td>
                                     <div class="checkbox">
                                         <label>
-                                            <input type="checkbox" value="${gs.gId}" name="gId"> ${vs.count}
+                                            <input type="checkbox" value="${storage.sId}" name="gId"> ${vs.count}
                                         </label>
                                     </div>
+                       		    </td>
+                                <td>${storage.sId}</td>
+                                <td>${storage.sGoodsName}</td>
+                                <td>${storage.sSupplierName}</td>
+                                <td>${storage.sPrice / 100}</td>
+                                <td>${storage.sType}</td>
+                                <td>
+                                	<c:choose>
+                                		<c:when test="${storage.sStockNum < 100}">
+                                			<font color="red">${storage.sStockNum}</font>
+                                		</c:when>
+                                		<c:otherwise>
+                                			${storage.sStockNum}
+                                		</c:otherwise>
+                                	</c:choose>
+                                
+                                
                                 </td>
-                                <td>${gs.gName}</td>
-                                <td>${gs.gProduce}</td>
-                                <td>${gs.gProductionDate}</td>
-                                <td>${gs.gReleaseDate}</td>
-                                <td>${gs.gType}</td>
-                                <td>${gs.gUnit}</td>
-                                <td>${gs.gSupplier}</td>
-                                <td>${gs.gAdvisePrice}</td>
-                                <td>${gs.gSalePrice}</td>
-                                <td>${gs.gPromotionPrice}</td>
-                                <td class="shenlue">${gs.gRemark}</td>
                                 <td>
                                     <a href="javascript:toUpdate('${gs.gId}')">修改</a>
                                 </td>
@@ -197,17 +189,6 @@
         			this.checked = f;
         	});
         }
-        
-        $(function(){
-        	$(".shenlue").each(function(){
-        		var str = $(this).html();
-        		if(str.length > 5 ){
-        			str = str.substr(0,5);
-        			$(this).html(str+"...");
-        		}
-        		
-        	});
-        });
     </script>
 
 

@@ -27,10 +27,13 @@
         <div class="row">
             <ul class="nav nav-tabs">
                 <li>
-                    <a href="<%=request.getContextPath() %>/goodsController?method=findAll">数据查询</a>
+                    <a href="<%=request.getContextPath() %>/goodsController?method=findAll&curPage=1">数据查询</a>
+                </li>
+                <li>
+                    <a href="javascript:toAdd()">数据添加</a>
                 </li>
                 <li class="active">
-                    <a href="javascript:void(0)">数据添加</a>
+                    <a href="javascript:void(0)">数据修改</a>
                 </li>
             </ul>
         </div>
@@ -44,10 +47,6 @@
                 <div class="form-group col-md-6">
                     <label for="gName">商品名称</label>
                     <input type="text" class="form-control" name="gName" id="gName" value="${goods.gName}" placeholder="请输入商品名称">
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="gNumber">商品数量</label>
-                    <input type="text" class="form-control" name="gNumber" id="gNumber" value="${goods.gNumber}"  placeholder="请输入商品数量">
                 </div>
                 <div class="form-group col-md-6">
                     <label for="gProduce">商品产地</label>
@@ -69,6 +68,23 @@
                     <label for="gUnit">计量单位</label>
                     <input type="text" class="form-control" name="gUnit" id="gUnit" value="${goods.gUnit}"  placeholder="请输入计量单位">
                 </div>
+                
+                 <div class="form-group col-md-6">
+                    <label for="gAdvisePrice">建议价格</label>
+                    <input type="text" class="form-control" name="gAdvisePrice" id="gAdvisePrice" value="${goods.gAdvisePrice}" placeholder="请输入建议价格">
+                </div>
+               
+                <div class="form-group col-md-6">
+                    <label for="gSalePrice">零售价格</label>
+                    <input type="text" class="form-control" name="gSalePrice" id="gSalePrice" value="${goods.gSalePrice}" placeholder="请输入零售价格" >
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="gPromotionPrice">促销价格</label>
+                    <input type="text" class="form-control" name="gPromotionPrice" id="gPromotionPrice"  value="${goods.gPromotionPrice}" placeholder="请输入促销价格">
+                </div>
+                
+                
+                
                 <div class="form-group col-md-6">
                     <label for="gSupplier">供应商</label>
                     <div class="form-group">
@@ -120,7 +136,9 @@
 		function update(){
 			$("#form1").submit();
 		}
-        
+		function toAdd() {
+            window.location = "<%=request.getContextPath() %>/goodsController?method=toAdd";
+        }
         
     </script>
 </body>

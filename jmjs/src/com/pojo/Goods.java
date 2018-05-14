@@ -6,7 +6,6 @@ public class Goods{
 
 	private Integer gId;
 	private String gName;
-	private Integer gNumber;
 	private String gProduce;
 	private Date gProductionDate;
 	private Date gReleaseDate;
@@ -14,6 +13,9 @@ public class Goods{
 	private String gUnit;
 	private String gRemark;
 	private String gSupplier;
+	private Double gAdvisePrice;
+	private Double gSalePrice;
+	private Double gPromotionPrice;
 
 
 	
@@ -45,22 +47,48 @@ public class Goods{
 	
 	
 	
-	
-	
-	public Integer getgNumber() {
-		return gNumber;
+	/**
+	 * @return the gAdvisePrice
+	 */
+	public Double getgAdvisePrice() {
+		return gAdvisePrice;
 	}
 
-	public void setgNumber(Integer gNumber) {
-		this.gNumber = gNumber;
+	/**
+	 * @param gAdvisePrice the gAdvisePrice to set
+	 */
+	public void setgAdvisePrice(Double gAdvisePrice) {
+		this.gAdvisePrice = gAdvisePrice;
 	}
-	
-	
-	
-	
-	
-	
-	
+
+	/**
+	 * @return the gSalePrice
+	 */
+	public Double getgSalePrice() {
+		return gSalePrice;
+	}
+
+	/**
+	 * @param gSalePrice the gSalePrice to set
+	 */
+	public void setgSalePrice(Double gSalePrice) {
+		this.gSalePrice = gSalePrice;
+	}
+
+	/**
+	 * @return the gPromotionPrice
+	 */
+	public Double getgPromotionPrice() {
+		return gPromotionPrice;
+	}
+
+	/**
+	 * @param gPromotionPrice the gPromotionPrice to set
+	 */
+	public void setgPromotionPrice(Double gPromotionPrice) {
+		this.gPromotionPrice = gPromotionPrice;
+	}
+
 	public String getgProduce() {
 		return gProduce;
 	}

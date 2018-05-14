@@ -34,7 +34,7 @@
             <div id="infoManager" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="collapseListGroupHeading1">
                 <div class="list-group">
                     <a class="list-group-item" href="<%=request.getContextPath() %>/customerController?method=findAll" target="right">客户管理</a>
-                    <a class="list-group-item" href="<%=request.getContextPath() %>/goodsController?method=findAll" target="right">商品管理</a>
+                    <a class="list-group-item" href="<%=request.getContextPath() %>/goodsController?method=findAll&curPage=1" target="right">商品管理</a>
                     <a class="list-group-item" href="<%=request.getContextPath() %>/supplierController?method=findAll" target="right">供应商管理</a>
                 </div>
             </div>
@@ -68,7 +68,7 @@
             <!-- systemManager下拉标签,.panel-collapse和.collapse标明折叠元素 没有.in表示不要显示 -->
             <div id="stockManager" class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapseListGroupHeading1">
                 <div class="list-group">
-                    <a class="list-group-item" href="_show-list.html" target="right">库存盘点</a>
+                    <a class="list-group-item" href="<%=request.getContextPath() %>/storageController?method=findAll" target="right">库存盘点</a>
                     <a class="list-group-item" href="_show-list.html" target="right">价格调整</a>
                 </div>
             </div>

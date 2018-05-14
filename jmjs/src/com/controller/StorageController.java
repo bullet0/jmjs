@@ -3,6 +3,7 @@ package com.controller;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,7 +13,7 @@ import com.pojo.Storage;
 import java.sql.Date;
 import java.util.List;
 import java.text.ParseException;
-
+@WebServlet("/storageController")
 public class StorageController extends HttpServlet{
 	private StorageService service = new StorageService();
 	@Override
@@ -234,7 +235,7 @@ public class StorageController extends HttpServlet{
 		List<Storage> storages = service.findAll();
 		req.setAttribute("storages",storages);
 		try {
-			req.getRequestDispatcher("/查询页面").forward(req, resp);
+			req.getRequestDispatcher("/html/storage_list.jsp").forward(req, resp);
 		} catch (ServletException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

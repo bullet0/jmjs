@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import com.service.GoodsService;
 import com.service.SupplierService;
+import com.util.PageUtil;
 import com.pojo.Goods;
 import com.pojo.Supplier;
 
@@ -112,8 +113,6 @@ public class GoodsController extends HttpServlet{
 			value = Integer.valueOf(gNumber);
 		}
 		
-		goods.setgNumber((Integer)value);
-		
 		
 		String gProduce = req.getParameter("gProduce");
 		value = gProduce;
@@ -181,6 +180,14 @@ public class GoodsController extends HttpServlet{
 		
 		goods.setgSupplier((String)value);
 		
+		
+		String gAdvisePrice = req.getParameter("gAdvisePrice");
+		goods.setgAdvisePrice(Double.valueOf(gAdvisePrice));
+		String gSalePrice = req.getParameter("gSalePrice");
+		goods.setgSalePrice(Double.valueOf(gSalePrice));
+		String gPromotionPrice = req.getParameter("gPromotionPrice");
+		goods.setgPromotionPrice(Double.valueOf(gPromotionPrice));
+		
 		service.update(goods);
 		try {
 			resp.sendRedirect(req.getContextPath()+"/goodsController?method=findAll");
@@ -242,7 +249,6 @@ public class GoodsController extends HttpServlet{
 			value = Integer.valueOf(gNumber);
 		}
 		
-		goods.setgNumber((Integer)value);
 		
 		
 		String gProduce = req.getParameter("gProduce");
@@ -311,6 +317,12 @@ public class GoodsController extends HttpServlet{
 		
 		goods.setgSupplier((String)value);
 		
+		String gAdvisePrice = req.getParameter("gAdvisePrice");
+		goods.setgAdvisePrice(Double.valueOf(gAdvisePrice));
+		String gSalePrice = req.getParameter("gSalePrice");
+		goods.setgSalePrice(Double.valueOf(gSalePrice));
+		String gPromotionPrice = req.getParameter("gPromotionPrice");
+		goods.setgPromotionPrice(Double.valueOf(gPromotionPrice));
 		
 		service.add(goods);
 		try {
@@ -333,8 +345,24 @@ public class GoodsController extends HttpServlet{
 	}
 
 	private void findAll(HttpServletRequest req, HttpServletResponse resp) {
-		List<Goods> goods = service.findAll();
-		req.setAttribute("goods",goods);
+		PageUtil page = new PageUtil();
+		
+		String curPage = req.getParameter("curPage");
+		if(curPage != null) {
+			page.setCurPage(Integer.valueOf(curPage));
+		}else {
+			page.setCurPage(1);
+		}
+		
+		String condition = req.getParameter("condition");
+		if(condition != null) {
+			page.setCondition(condition);
+		}else {
+			page.setCondition("");
+		}
+		
+		page = service.findAll(page);
+		req.setAttribute("pageUtil",page);
 		try {
 			req.getRequestDispatcher("/html/goods_list.jsp").forward(req, resp);
 		} catch (ServletException e) {

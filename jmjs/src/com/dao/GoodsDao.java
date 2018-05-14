@@ -1,6 +1,8 @@
 package com.dao;
 
 import com.pojo.Goods;
+import com.util.PageUtil;
+
 import java.sql.Date;
 import java.util.List;
 import java.util.ArrayList;
@@ -99,18 +101,20 @@ public class GoodsDao {
 		PreparedStatement ps = null;
 		try {
 			conn.setAutoCommit(false);
-			ps = conn.prepareStatement("update goods set g_id=?,g_name=?,g_number=?,g_produce=?,g_production_date=?,g_release_date=?,g_type=?,g_unit=?,g_remark=?,g_supplier=? where g_Id = ?");
+			ps = conn.prepareStatement("update goods set g_id=?,g_name=?,g_produce=?,g_production_date=?,g_release_date=?,g_type=?,g_unit=?,g_remark=?,g_supplier=?,g_Advise_Price=?,g_Sale_Price=?,g_Promotion_Price=? where g_Id = ?");
 			ps.setObject(1, goods.getgId());
 			ps.setObject(2, goods.getgName());
-			ps.setObject(3, goods.getgNumber());
-			ps.setObject(4, goods.getgProduce());
-			ps.setObject(5, goods.getgProductionDate());
-			ps.setObject(6, goods.getgReleaseDate());
-			ps.setObject(7, goods.getgType());
-			ps.setObject(8, goods.getgUnit());
-			ps.setObject(9, goods.getgRemark());
-			ps.setObject(10, goods.getgSupplier());
-			ps.setObject(11, goods.getgId());
+			ps.setObject(3, goods.getgProduce());
+			ps.setObject(4, goods.getgProductionDate());
+			ps.setObject(5, goods.getgReleaseDate());
+			ps.setObject(6, goods.getgType());
+			ps.setObject(7, goods.getgUnit());
+			ps.setObject(8, goods.getgRemark());
+			ps.setObject(9, goods.getgSupplier());
+			ps.setObject(10, goods.getgAdvisePrice());
+			ps.setObject(11, goods.getgSalePrice());
+			ps.setObject(12, goods.getgPromotionPrice());
+			ps.setObject(13, goods.getgId());
 			ps.executeUpdate();
 			conn.commit();
 		} catch (SQLException e) {
@@ -138,7 +142,6 @@ public class GoodsDao {
 				goods = new Goods();
 				goods.setgId(rs.getInt("g_id"));
 				goods.setgName(rs.getString("g_name"));
-				goods.setgNumber(rs.getInt("g_number"));
 				goods.setgProduce(rs.getString("g_produce"));
 				goods.setgProductionDate(rs.getDate("g_production_date"));
 				goods.setgReleaseDate(rs.getDate("g_release_date"));
@@ -146,6 +149,9 @@ public class GoodsDao {
 				goods.setgUnit(rs.getString("g_unit"));
 				goods.setgRemark(rs.getString("g_remark"));
 				goods.setgSupplier(rs.getString("g_supplier"));
+				goods.setgAdvisePrice(rs.getDouble("g_Advise_Price"));
+				goods.setgSalePrice(rs.getDouble("g_Sale_Price"));
+				goods.setgPromotionPrice(rs.getDouble("g_Promotion_Price"));
 			}
 			return goods;
 		} catch (SQLException e) {
@@ -157,6 +163,54 @@ public class GoodsDao {
 		return null;
 	}
 
+	public List<Goods> findAll(PageUtil page) {
+		Connection conn = this.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		List<Goods> list = new ArrayList<Goods>();
+		try {
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement("select * from goods where g_name like ? limit ?,? ");
+			ps.setString(1, "%"+page.getCondition()+"%");
+			ps.setInt(2, (page.getCurPage() - 1)*page.getPageSize());
+			ps.setInt(3, page.getPageSize());
+			rs = ps.executeQuery();
+			conn.commit();
+			while (rs.next()) {
+				Goods goods = new Goods();
+				
+				goods.setgId(rs.getInt("g_id"));
+				
+				goods.setgName(rs.getString("g_name"));
+				
+				goods.setgProduce(rs.getString("g_produce"));
+				
+				goods.setgProductionDate(rs.getDate("g_production_date"));
+				
+				goods.setgReleaseDate(rs.getDate("g_release_date"));
+				
+				goods.setgType(rs.getString("g_type"));
+				
+				goods.setgUnit(rs.getString("g_unit"));
+				
+				goods.setgRemark(rs.getString("g_remark"));
+				
+				goods.setgSupplier(rs.getString("g_supplier"));
+				
+				goods.setgAdvisePrice(rs.getDouble("g_Advise_Price"));
+				goods.setgSalePrice(rs.getDouble("g_Sale_Price"));
+				goods.setgPromotionPrice(rs.getDouble("g_Promotion_Price"));
+				list.add(goods);
+			}
+			return list;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			this.close(conn,ps,rs);
+		}
+		return null;
+	}
 	public List<Goods> findAll() {
 		Connection conn = this.getConnection();
 		PreparedStatement ps = null;
@@ -174,8 +228,6 @@ public class GoodsDao {
 				
 				goods.setgName(rs.getString("g_name"));
 				
-				goods.setgNumber(rs.getInt("g_number"));
-				
 				goods.setgProduce(rs.getString("g_produce"));
 				
 				goods.setgProductionDate(rs.getDate("g_production_date"));
@@ -189,6 +241,10 @@ public class GoodsDao {
 				goods.setgRemark(rs.getString("g_remark"));
 				
 				goods.setgSupplier(rs.getString("g_supplier"));
+				
+				goods.setgAdvisePrice(rs.getDouble("g_Advise_Price"));
+				goods.setgSalePrice(rs.getDouble("g_Sale_Price"));
+				goods.setgPromotionPrice(rs.getDouble("g_Promotion_Price"));
 				list.add(goods);
 			}
 			return list;
@@ -206,17 +262,19 @@ public class GoodsDao {
 		PreparedStatement ps = null;
 		try {
 			conn.setAutoCommit(false);
-			ps = conn.prepareStatement("insert into goods(g_id,g_name,g_number,g_produce,g_production_date,g_release_date,g_type,g_unit,g_remark,g_supplier) values (?,?,?,?,?,?,?,?,?,?)");
+			ps = conn.prepareStatement("insert into goods(g_id,g_name,g_produce,g_production_date,g_release_date,g_type,g_unit,g_remark,g_supplier,g_Advise_Price,g_Sale_Price,g_Promotion_Price) values (?,?,?,?,?,?,?,?,?,?,?,?)");
 			ps.setObject(1,null);
 			ps.setObject(2, goods.getgName());
-			ps.setObject(3, goods.getgNumber());
-			ps.setObject(4, goods.getgProduce());
-			ps.setObject(5, goods.getgProductionDate());
-			ps.setObject(6, goods.getgReleaseDate());
-			ps.setObject(7, goods.getgType());
-			ps.setObject(8, goods.getgUnit());
-			ps.setObject(9, goods.getgRemark());
-			ps.setObject(10, goods.getgSupplier());
+			ps.setObject(3, goods.getgProduce());
+			ps.setObject(4, goods.getgProductionDate());
+			ps.setObject(5, goods.getgReleaseDate());
+			ps.setObject(6, goods.getgType());
+			ps.setObject(7, goods.getgUnit());
+			ps.setObject(8, goods.getgRemark());
+			ps.setObject(9, goods.getgSupplier());
+			ps.setObject(10, goods.getgAdvisePrice());
+			ps.setObject(11, goods.getgSalePrice());
+			ps.setObject(12, goods.getgPromotionPrice());
 			ps.executeUpdate();
 			conn.commit();
 		} catch (SQLException e) {
@@ -225,5 +283,30 @@ public class GoodsDao {
 		}finally {
 			this.close(conn,ps,null);
 		}
+	}
+
+	public int getCount(PageUtil page) {
+		Connection conn = this.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement("select count(1) from goods where g_name like ?");
+			
+			ps.setObject(1, "%"+page.getCondition()+"%");
+			
+			rs = ps.executeQuery();
+			conn.commit();
+			rs.next();
+			
+			return rs.getInt(1);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			this.close(conn,ps,rs);
+		}
+		return -1;
+		
 	}
 }

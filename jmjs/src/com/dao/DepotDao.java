@@ -230,7 +230,6 @@ public class DepotDao {
 							Goods goods = new Goods();
 							goods.setgId(rs.getInt("g_id"));
 							goods.setgName(rs.getString("g_name"));
-							goods.setgNumber(rs.getInt("g_number"));
 							goods.setgProduce(rs.getString("g_produce"));
 							goods.setgProductionDate(rs.getDate("g_production_date"));
 							goods.setgReleaseDate(rs.getDate("g_release_date"));
@@ -269,7 +268,6 @@ public class DepotDao {
 						Goods goods = new Goods();
 						goods.setgId(rs.getInt("g_id"));
 						goods.setgName(rs.getString("g_name"));
-						goods.setgNumber(rs.getInt("g_number"));
 						goods.setgProduce(rs.getString("g_produce"));
 						goods.setgProductionDate(rs.getDate("g_production_date"));
 						goods.setgReleaseDate(rs.getDate("g_release_date"));

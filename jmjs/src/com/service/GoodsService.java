@@ -2,6 +2,8 @@ package com.service;
 
 import com.dao.GoodsDao;
 import com.pojo.Goods;
+import com.util.PageUtil;
+
 import java.util.List;
 
 public class GoodsService {
@@ -23,7 +25,19 @@ public class GoodsService {
 		dao.add(goods);
 	}
 
+	public PageUtil findAll(PageUtil page) {
+		
+		int count = dao.getCount(page);
+		page.setTotalCount(count);
+		
+		page.setTotalPage();
+		
+		List<Goods> list = dao.findAll(page);
+		page.setList(list);
+		return page;
+	}
 	public List<Goods> findAll() {
+		
 		return dao.findAll();
 	}
 	public void deleteAll(String[] gIds) {
