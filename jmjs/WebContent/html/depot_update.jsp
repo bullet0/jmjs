@@ -43,9 +43,10 @@
         </div>
         <div class="row">
             <form id="form1" action="<%=request.getContextPath() %>/depotController?method=update" method="post">
+                <input type="hidden" name="dId" id="dId" value="${depot.dId}">
                 <div class="form-group col-md-6">
-                    <label for="dId">订单编号</label>
-                    <input type="text" readonly="readonly" class="form-control" name="dId" id="dId" value="${depot.dId}">
+                    <label for="dNo">订单编号</label>
+                    <input type="text" readonly="readonly" class="form-control" name="dNo" id="dNo" value="${depot.dNo}">
                 </div>
                 <div class="form-group col-md-6">
                     <label for="dVarietyNum">品种数量</label>
@@ -66,7 +67,24 @@
                     
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="dSettlementWay">供应商</label>
+                    <label for="sId">供应商</label>
+                    <div class="form-group">
+                        <select class="form-control" id="sId" name="sId">
+                        	<c:forEach items="${suppliers}" var="supplier">
+                        		<c:choose>
+                        			<c:when test="${supplier.sId == depot.supplierId.sId}">
+                        				<option value="${supplier.sId}" selected="selected">${supplier.sName}</option>
+                        			</c:when>
+                        			<c:otherwise>
+                        				<option value="${supplier.sId}">${supplier.sName}</option>
+                        			</c:otherwise>
+                        		</c:choose>
+                        	</c:forEach>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="dSettlementWay">支付方式</label>
                     <div class="form-group">
                         <select class="form-control" id="dSettlementWay" name="dSettlementWay">
                         	<c:forEach items="现金,银行卡,信用卡,支付宝" var="way">
@@ -93,7 +111,7 @@
 	        				<div class="form-group col-md-4">
 		        				<label for="gId">品种</label>
 		        				<div class="form-group">
-			        				<select class="form-control" id="gId" name="gId">
+			        				<select class="form-control" id="gId" name="gId" onchange='getAdvisePrice(this)'>
 			        				<c:forEach items="${goods}" var="gs">
 			        					<c:choose>
 			        						<c:when test="${gs.gId == purchase.goodsId.gId}">
@@ -109,7 +127,7 @@
 	        				</div>
 	        				<div class="form-group col-md-4">
 		        				<label for="goodsPrice">商品单价</label>
-		        				<input type="text" class="form-control" name="goodsPrice" id="goodsPrice" onkeyup="countTotalPrice(this)" placeholder="请输入商品单价" value="${purchase.goodsPrice / 100}">
+		        				<input type="text" class="form-control" name="goodsPrice" id="goodsPrice" onkeyup="countTotalPrice(this)" placeholder="请输入商品单价" value="${purchase.goodsPrice}">
 	        				</div>
 	        				<div class="form-group col-md-3">
 		        				<label for="goodsNumber">商品数量</label>
@@ -186,6 +204,8 @@
         	addDiv.append(str);
         	//每添加一次，都要将商品种类添加一个
         	$("#dVarietyNum").val($("#dVarietyNum").val()*1+1);
+        	
+        	getAdvisePrice(addDiv.find("select[name='gId']").last());
     		return false;
         }
         
@@ -215,7 +235,19 @@
        		$("#dTotalPrice").val(total);
         	
         }
-        
+        function getAdvisePrice(ths){
+        	$.ajax({
+        		type:'post',
+        		url:'<%=request.getContextPath() %>/goodsController?method=getAdvisePrice',
+        		data:'gId='+$(ths).val(),
+        		success:function(msg){
+        			var inp = $(ths).parent().parent().next().children("input");
+        			inp.val(msg)
+        			//价格改变后  计算总价
+        			countTotalPrice(inp);
+        		}
+        	});
+        }
     </script>
 </body>
 

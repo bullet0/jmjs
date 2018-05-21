@@ -134,7 +134,7 @@ public class PurchaseDao {
 				purchase.setpId(rs.getInt("p_id"));
 //				purchase.setDepotId(rs.getInt("depot_id"));
 //				purchase.setGoodsId(rs.getInt("goods_id"));
-				purchase.setGoodsPrice(rs.getInt("goods_price"));
+				purchase.setGoodsPrice(rs.getDouble("goods_price"));
 				purchase.setGoodsNumber(rs.getInt("goods_number"));
 			}
 			return purchase;
@@ -166,7 +166,7 @@ public class PurchaseDao {
 //				
 //				purchase.setGoodsId(rs.getInt("goods_id"));
 				
-				purchase.setGoodsPrice(rs.getInt("goods_price"));
+				purchase.setGoodsPrice(rs.getDouble("goods_price"));
 				
 				purchase.setGoodsNumber(rs.getInt("goods_number"));
 				list.add(purchase);

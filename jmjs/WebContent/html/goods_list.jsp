@@ -131,6 +131,7 @@
                                 <td>${gs.gAdvisePrice}</td>
                                 <td>${gs.gSalePrice}</td>
                                 <td>${gs.gPromotionPrice}</td>
+                                <!-- 此处使用js实现 -->
                                 <td class="shenlue">${gs.gRemark}</td>
                                 <td>
                                     <a href="javascript:toUpdate('${gs.gId}')">修改</a>
@@ -197,7 +198,7 @@
         			this.checked = f;
         	});
         }
-        
+        // 多余文字显示 ...
         $(function(){
         	$(".shenlue").each(function(){
         		var str = $(this).html();

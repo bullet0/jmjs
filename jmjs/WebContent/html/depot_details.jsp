@@ -59,7 +59,24 @@
                     <input type="text" readonly="readonly" class="form-control" name="dDate" id="dDate" value="${depot.dDate}" placeholder="请输入进货日期">
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="dSettlementWay">供应商</label>
+                    <label for="sId">供应商</label>
+                    <div class="form-group">
+                        <select readonly="readonly" class="form-control" id="sId" name="sId">
+                        	<c:forEach items="${suppliers}" var="sup">
+                        		<c:choose>
+                        			<c:when test="${sup.sId == depot.supplierId.sId}">
+                        				<option value="${sup.sId}" selected="selected">${sup.sName}</option>
+                        			</c:when>
+                        			<c:otherwise>
+                        				<option value="${sup.sId}">${sup.sName}</option>
+                        			</c:otherwise>
+                        		</c:choose>
+                        	</c:forEach>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="dSettlementWay">支付方式</label>
                     <div class="form-group">
                         <select class="form-control" disabled="disabled" id="dSettlementWay" name="dSettlementWay">
                         	<option selected="selected">${depot.dSettlementWay}</option>
@@ -91,7 +108,7 @@
 						        					</c:if>
 						        				</c:forEach>
 											</td>
-			                                 <td>${purchase.goodsPrice / 100}</td>
+			                                 <td>${purchase.goodsPrice}</td>
 			                                <td>${purchase.goodsNumber}</td>
 			                            </tr>
 				        			</c:forEach>

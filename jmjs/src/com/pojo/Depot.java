@@ -7,15 +7,62 @@ import java.util.List;
 public class Depot{
 
 	private String dId;
+	private String dNo;
 	private Integer dVarietyNum;
 	private Integer dTotalPrice;
 	private String dDate;
 	private String dSettlementWay;
 	private List<Purchase>  purchases = new ArrayList<>();
+	private Supplier supplierId;
+	private String supplierName;
 	
 	
 	
 	
+	
+	
+	/**
+	 * @return the dNo
+	 */
+	public String getdNo() {
+		return dNo;
+	}
+
+	/**
+	 * @param dNo the dNo to set
+	 */
+	public void setdNo(String dNo) {
+		this.dNo = dNo;
+	}
+
+	/**
+	 * @return the supplierId
+	 */
+	public Supplier getSupplierId() {
+		return supplierId;
+	}
+
+	/**
+	 * @param supplierId the supplierId to set
+	 */
+	public void setSupplierId(Supplier supplierId) {
+		this.supplierId = supplierId;
+	}
+
+	/**
+	 * @return the supplierName
+	 */
+	public String getSupplierName() {
+		return supplierName;
+	}
+
+	/**
+	 * @param supplierName the supplierName to set
+	 */
+	public void setSupplierName(String supplierName) {
+		this.supplierName = supplierName;
+	}
+
 	/**
 	 * @return the purchases
 	 */

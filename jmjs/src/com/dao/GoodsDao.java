@@ -309,4 +309,56 @@ public class GoodsDao {
 		return -1;
 		
 	}
+
+	public double getAdvisePrice(String gId) {
+		Connection conn = this.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement("SELECT g_advise_price FROM `goods` WHERE g_id=?");
+			ps.setObject(1,gId);
+			rs = ps.executeQuery();
+			conn.commit();
+			double price = -1;
+			while (rs.next()) {
+				price = rs.getDouble(1);
+				
+			}
+			
+			return price;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			this.close(conn,ps,rs);
+		}
+		return -1;
+	}
+
+	public List<Goods> findAllGoodIdAndName() {
+		Connection conn = this.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		List<Goods> list = new ArrayList<Goods>();
+		try {
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement("select g_id,g_name from goods");
+			rs = ps.executeQuery();
+			conn.commit();
+			while (rs.next()) {
+				Goods goods = new Goods();
+				goods.setgId(rs.getInt("g_id"));
+				goods.setgName(rs.getString("g_name"));
+				list.add(goods);
+			}
+			return list;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			this.close(conn,ps,rs);
+		}
+		return null;
+	}
 }

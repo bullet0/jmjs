@@ -114,7 +114,7 @@ public class PurchaseController extends HttpServlet{
 			value = Integer.valueOf(goodsPrice);
 		}
 		
-		purchase.setGoodsPrice((Integer)value);
+		purchase.setGoodsPrice((Double)value);
 		
 		
 		String goodsNumber = req.getParameter("goodsNumber");
@@ -189,7 +189,7 @@ public class PurchaseController extends HttpServlet{
 			value = Integer.valueOf(goodsPrice);
 		}
 		
-		purchase.setGoodsPrice((Integer)value);
+		purchase.setGoodsPrice((Double)value);
 		
 		
 		String goodsNumber = req.getParameter("goodsNumber");

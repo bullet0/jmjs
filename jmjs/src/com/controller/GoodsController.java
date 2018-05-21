@@ -1,6 +1,7 @@
 package com.controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -42,6 +43,8 @@ public class GoodsController extends HttpServlet{
 			this.delete(req,resp);
 		}else if("deleteAll".equals(method)){
 			this.deleteAll(req,resp);
+		}else if("getAdvisePrice".equals(method)){
+			this.getAdvisePrice(req,resp);
 		}else{
 			System.out.println("用户请求路径有误");
 			resp.sendRedirect("404.jsp");
@@ -49,6 +52,22 @@ public class GoodsController extends HttpServlet{
 		
 		
 		
+	}
+
+
+
+	private void getAdvisePrice(HttpServletRequest req, HttpServletResponse resp) {
+		String gId = req.getParameter("gId");
+		double advisePrice = service.getAdvisePrice(gId);
+		try {
+			PrintWriter out = resp.getWriter();
+			out.print(advisePrice);
+			out.flush();
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 
@@ -318,11 +337,17 @@ public class GoodsController extends HttpServlet{
 		goods.setgSupplier((String)value);
 		
 		String gAdvisePrice = req.getParameter("gAdvisePrice");
-		goods.setgAdvisePrice(Double.valueOf(gAdvisePrice));
+		if(gAdvisePrice != null && !gAdvisePrice.equals("")) {
+			goods.setgAdvisePrice(Double.valueOf(gAdvisePrice));
+		}
 		String gSalePrice = req.getParameter("gSalePrice");
-		goods.setgSalePrice(Double.valueOf(gSalePrice));
+		if(gSalePrice != null  && !gSalePrice.equals("")) {
+			goods.setgSalePrice(Double.valueOf(gSalePrice));
+		}
 		String gPromotionPrice = req.getParameter("gPromotionPrice");
-		goods.setgPromotionPrice(Double.valueOf(gPromotionPrice));
+		if(gPromotionPrice != null  && !gPromotionPrice.equals("")) {
+			goods.setgPromotionPrice(Double.valueOf(gPromotionPrice));
+		}
 		
 		service.add(goods);
 		try {

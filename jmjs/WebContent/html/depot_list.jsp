@@ -102,6 +102,7 @@
                                 <th>总价</th>
                                 <th>进货日期</th>
                                 <th>支付方式</th>
+                                <th>供应商名称</th>
                                 <th>订单中商品概览</th>
                                 <th class="text-center">操作</th>
                             </tr>
@@ -116,11 +117,12 @@
                                         </label>
                                     </div>
                                 </td>
-                                <td>${depot.dId}</td>
+                                <td>${depot.dNo}</td>
                                 <td>${depot.dVarietyNum}</td>
                                 <td>${depot.dTotalPrice}</td>
                                 <td>${depot.dDate}</td>
                                 <td>${depot.dSettlementWay}</td>
+                                <td>${depot.supplierName}</td>
                                 <td>
                                 <c:forEach items="${depot.purchases}" var="purchase" end="2">
                                 	${purchase.goodsId.gName}<br>
@@ -135,6 +137,7 @@
                         </c:forEach>
                         </tbody>
                     </table>
+                    </div>
             </form>
             </div>
 
@@ -167,7 +170,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
 
 
@@ -191,7 +193,7 @@
         }
         
         function chooseAll(f){
-        	$("input[name='sId']").each(function(){
+        	$("input[name='dId']").each(function(){
         			this.checked = f;
         	});
         }

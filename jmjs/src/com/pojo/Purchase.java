@@ -7,7 +7,7 @@ public class Purchase{
 	private Integer pId;
 	private Depot depotId;
 	private Goods goodsId;
-	private Integer goodsPrice;
+	private Double goodsPrice;
 	private Integer goodsNumber;
 
 
@@ -52,21 +52,21 @@ public class Purchase{
 		this.goodsId = goodsId;
 	}
 
-	public Integer getGoodsPrice() {
+	
+	/**
+	 * @return the goodsPrice
+	 */
+	public Double getGoodsPrice() {
 		return goodsPrice;
 	}
 
-	public void setGoodsPrice(Integer goodsPrice) {
+	/**
+	 * @param goodsPrice the goodsPrice to set
+	 */
+	public void setGoodsPrice(Double goodsPrice) {
 		this.goodsPrice = goodsPrice;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
 	public Integer getGoodsNumber() {
 		return goodsNumber;
 	}

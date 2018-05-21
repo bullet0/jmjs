@@ -12,12 +12,16 @@ import javax.servlet.http.HttpServletResponse;
 import com.pojo.Depot;
 import com.pojo.Goods;
 import com.pojo.Purchase;
+import com.pojo.Supplier;
 import com.service.DepotService;
 import com.service.GoodsService;
+import com.service.SupplierService;
 @WebServlet("/depotController")
 public class DepotController extends HttpServlet{
 	private DepotService service = new DepotService();
 	private GoodsService goodsService = new GoodsService();
+	private SupplierService supplierService = new SupplierService();
+	
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		req.setCharacterEncoding("utf-8");
@@ -64,6 +68,9 @@ public class DepotController extends HttpServlet{
 		 
 		List<Goods> goods = goodsService.findAll();
 		req.setAttribute("goods", goods);
+		
+		List<Supplier> suppliers = supplierService.findAllSupIdAndName();
+		req.setAttribute("suppliers", suppliers);
 		try {
 			req.getRequestDispatcher("/html/depot_details.jsp").forward(req, resp);
 		} catch (ServletException e) {
@@ -115,6 +122,9 @@ public class DepotController extends HttpServlet{
 		String dId = req.getParameter("dId");
 		depot.setdId(dId);
 		
+		String dNo = req.getParameter("dNo");
+		depot.setdNo(dNo);
+		
 		String dVarietyNum = req.getParameter("dVarietyNum");
 		if(dVarietyNum != null){
 			value = Integer.valueOf(dVarietyNum);
@@ -140,8 +150,11 @@ public class DepotController extends HttpServlet{
 		String dSettlementWay = req.getParameter("dSettlementWay");
 		value = dSettlementWay;
 		
-		
 		depot.setdSettlementWay((String)value);
+		String sId = req.getParameter("sId");
+		Supplier supplier = new Supplier();
+		supplier.setsId(Integer.valueOf(sId));
+		depot.setSupplierId(supplier);
 		
 		String[] gIds = req.getParameterValues("gId");
 		String[] goodsPrice = req.getParameterValues("goodsPrice");
@@ -154,7 +167,7 @@ public class DepotController extends HttpServlet{
 				g.setgId(Integer.parseInt(gIds[i]));
 				p.setGoodsId(g);
 				
-				p.setGoodsPrice((int) (Double.valueOf(goodsPrice[i]) * 100));
+				p.setGoodsPrice(Double.valueOf(goodsPrice[i]));
 				p.setGoodsNumber(Integer.valueOf(goodsNumber[i]));
 				depot.getPurchases().add(p);
 			}
@@ -182,6 +195,10 @@ public class DepotController extends HttpServlet{
 		
 		List<Goods> goods = goodsService.findAll();
 		req.setAttribute("goods", goods);
+		
+		List<Supplier> suppliers = supplierService.findAllSupIdAndName();
+		req.setAttribute("suppliers", suppliers);
+		
 		try {
 			req.getRequestDispatcher("/html/depot_update.jsp").forward(req, resp);
 		} catch (ServletException e) {
@@ -219,6 +236,12 @@ public class DepotController extends HttpServlet{
 		depot.setdDate((String)value);
 		
 		
+		String sId = req.getParameter("sId");
+		Supplier s = new Supplier();
+		s.setsId(Integer.valueOf(sId));
+		depot.setSupplierId(s);
+		
+		
 		String dSettlementWay = req.getParameter("dSettlementWay");
 		value = dSettlementWay;
 		
@@ -236,7 +259,7 @@ public class DepotController extends HttpServlet{
 				g.setgId(Integer.parseInt(gIds[i]));
 				p.setGoodsId(g);
 				
-				p.setGoodsPrice((int) (Double.valueOf(goodsPrice[i]) * 100));
+				p.setGoodsPrice(Double.valueOf(goodsPrice[i]));
 				p.setGoodsNumber(Integer.valueOf(goodsNumber[i]));
 				depot.getPurchases().add(p);
 			}
@@ -253,8 +276,11 @@ public class DepotController extends HttpServlet{
 	}
 
 	private void toAdd(HttpServletRequest req, HttpServletResponse resp) {
-		List<Goods> goods = goodsService.findAll();
+		List<Goods> goods = goodsService.findAllGoodIdAndName();
 		req.setAttribute("goods", goods);
+		List<Supplier> suppliers = supplierService.findAllSupIdAndName();
+		req.setAttribute("suppliers", suppliers);
+		
 		try {
 			req.getRequestDispatcher("/html/depot_add.jsp").forward(req, resp);
 		} catch (ServletException | IOException e) {

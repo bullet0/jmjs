@@ -66,7 +66,17 @@
                     
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="dSettlementWay">供应商</label>
+                    <label for="sId">供应商</label>
+                    <div class="form-group">
+                        <select class="form-control" id="sId" name="sId">
+                        	<c:forEach items="${suppliers}" var="sup">
+                        		<option value="${sup.sId}">${sup.sName}</option>
+                        	</c:forEach>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="dSettlementWay">支付方式</label>
                     <div class="form-group">
                         <select class="form-control" id="dSettlementWay" name="dSettlementWay">
                             <option>现金</option>
@@ -125,7 +135,7 @@
 
         	var str =   "<div class=\"row\">"+
         				"<div class=\"form-group col-md-4\"><label for=\"gId\">品种</label>"+
-        				"<div class=\"form-group\"><select class=\"form-control\" id=\"gId\" name=\"gId\">";
+        				"<div class=\"form-group\"><select class=\"form-control\" id=\"gId\" name=\"gId\" onchange='getAdvisePrice(this)'>";
         	<c:forEach items="${goods}" var="gs">
         		str+="<option value='${gs.gId}'>${gs.gName}</option>";
         	</c:forEach>
@@ -146,6 +156,8 @@
         	
         	//每添加一次，都要将商品种类添加一个
         	$("#dVarietyNum").val($("#dVarietyNum").val()*1+1);
+        	
+        	getAdvisePrice(addDiv.find("select[name='gId']").last())
     		return false;
         }
         
@@ -174,6 +186,21 @@
        		}
        		$("#dTotalPrice").val(total);
         	
+        }
+        
+        
+        function getAdvisePrice(ths){
+        	$.ajax({
+        		type:'post',
+        		url:'<%=request.getContextPath() %>/goodsController?method=getAdvisePrice',
+        		data:'gId='+$(ths).val(),
+        		success:function(msg){
+        			var inp = $(ths).parent().parent().next().children("input");
+        			inp.val(msg)
+        			//价格改变后  计算总价
+        			countTotalPrice(inp);
+        		}
+        	});
         }
     </script>
    

@@ -221,4 +221,32 @@ public class SupplierDao {
 			this.close(conn,ps,null);
 		}
 	}
+
+	public List<Supplier> findAllSupIdAndName() {
+		Connection conn = this.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		List<Supplier> list = new ArrayList<Supplier>();
+		try {
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement("select s_id,s_name from supplier");
+			rs = ps.executeQuery();
+			conn.commit();
+			while (rs.next()) {
+				Supplier supplier = new Supplier();
+				
+				supplier.setsId(rs.getInt("s_id"));
+				
+				supplier.setsName(rs.getString("s_name"));
+				list.add(supplier);
+			}
+			return list;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			this.close(conn,ps,rs);
+		}
+		return null;
+	}
 }

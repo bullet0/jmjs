@@ -29,5 +29,10 @@ public class SupplierService {
 	public void deleteAll(String[] sIds) {
 		dao.deleteAll(sIds);
 	}
+
+	public List<Supplier> findAllSupIdAndName() {
+		// TODO Auto-generated method stub
+		return dao.findAllSupIdAndName();
+	}
 	
 }

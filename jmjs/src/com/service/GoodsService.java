@@ -43,5 +43,15 @@ public class GoodsService {
 	public void deleteAll(String[] gIds) {
 		dao.deleteAll(gIds);
 	}
+
+	public double getAdvisePrice(String gId) {
+		// TODO Auto-generated method stub
+		return dao.getAdvisePrice(gId);
+	}
+
+	public List<Goods> findAllGoodIdAndName() {
+		// TODO Auto-generated method stub
+		return dao.findAllGoodIdAndName();
+	}
 	
 }

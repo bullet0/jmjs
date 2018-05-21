@@ -25,8 +25,8 @@ public class DepotService {
 	public void add(Depot depot) {
 		
 		//生成订单号
-		String dId = this.getNo();
-		depot.setdId(dId);
+		String dNo = this.getNo();
+		depot.setdNo(dNo);
 		
 		dao.add(depot);
 	}
