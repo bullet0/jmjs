@@ -1,6 +1,7 @@
 package com.dao;
 
 import com.pojo.Goods;
+import com.pojo.GoodsVO;
 import com.util.PageUtil;
 
 import java.sql.Date;
@@ -360,5 +361,60 @@ public class GoodsDao {
 			this.close(conn,ps,rs);
 		}
 		return null;
+	}
+
+	public List<GoodsVO> findAllPrice() {
+		Connection conn = this.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		List<GoodsVO> list = new ArrayList<GoodsVO>();
+		try {
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement("SELECT g.g_id,g.g_name,g.g_supplier,g.g_unit,s.num ,g.g_advise_price,g.g_sale_price,g.g_promotion_price FROM goods g LEFT JOIN (SELECT `s_id`, `s_goods_name`, `s_supplier_name`, ROUND(SUM(`s_price`*`s_stock_num`) / SUM(`s_stock_num`),2) avg_price,`s_type`, SUM(`s_stock_num`) num,SUM(`s_price`*`s_stock_num`) sum_price  FROM `storage` GROUP BY s_goods_name) s ON g.g_name=s.s_goods_name");
+			rs = ps.executeQuery();
+			conn.commit();
+			while (rs.next()) {
+				GoodsVO goods = new GoodsVO();
+				goods.setgId(rs.getInt("g_id"));
+				goods.setgName(rs.getString("g_name"));
+				goods.setgSupplier(rs.getString("g_supplier"));
+				goods.setgUnit(rs.getString("g_unit"));
+				goods.setStorageNumber(rs.getInt("num"));
+				goods.setgAdvisePrice(rs.getDouble("g_Advise_Price"));
+				goods.setgSalePrice(rs.getDouble("g_Sale_Price"));
+				goods.setgPromotionPrice(rs.getDouble("g_Promotion_Price"));
+				
+				list.add(goods);
+			}
+			return list;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			this.close(conn,ps,rs);
+		}
+		return null;
+	}
+
+	public int changePrice(Goods goods) {
+		Connection conn = this.getConnection();
+		PreparedStatement ps = null;
+		try {
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement("update goods set g_Advise_Price=?,g_Sale_Price=?,g_Promotion_Price=? where g_Id = ?");
+			ps.setObject(1, goods.getgAdvisePrice());
+			ps.setObject(2, goods.getgSalePrice());
+			ps.setObject(3, goods.getgPromotionPrice());
+			ps.setObject(4, goods.getgId());
+			int i = ps.executeUpdate();
+			conn.commit();
+			return i;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			this.close(conn,ps,null);
+		}
+		return 0;
 	}
 }

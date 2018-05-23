@@ -2,6 +2,7 @@ package com.service;
 
 import com.dao.GoodsDao;
 import com.pojo.Goods;
+import com.pojo.GoodsVO;
 import com.util.PageUtil;
 
 import java.util.List;
@@ -52,6 +53,15 @@ public class GoodsService {
 	public List<Goods> findAllGoodIdAndName() {
 		// TODO Auto-generated method stub
 		return dao.findAllGoodIdAndName();
+	}
+
+	public List<GoodsVO> findAllPrice() {
+		// TODO Auto-generated method stub
+		return dao.findAllPrice();
+	}
+
+	public int changePrice(Goods goods) {
+		return dao.changePrice(goods);
 	}
 	
 }

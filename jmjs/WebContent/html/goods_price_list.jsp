@@ -35,6 +35,12 @@
         body{
         	overflow-x:hidden;
         }
+        .form-control{
+        	width: 90%;
+        }
+        .th-fixed{
+        	width: 100px;
+        }
     </style>
 </head>
 
@@ -55,13 +61,19 @@
         <div class="row" style="margin-bottom: 20px">
             <!-- 表格上面的搜索框 -->
             <form action="tijiao biaodan" class="form-inline" role="form">
-                <div class="col-md-4  col-md-push-4">
+                <div class="col-md-4">
+                    <a class="btn btn-default" type="button" onclick="toAdd()">
+                        <span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;添加</a>
+                    <a class="btn btn-danger" onclick="deleteAll()" type="button">
+                        <span class="glyphicon glyphicon-glyphicon glyphicon-trash"></span>&nbsp;&nbsp;全部删除</a>
+                </div>
+                <div class="col-md-4">
                     <div class="input-group">
                         <div class="input-group-btn">
                             <select name="type" class="form-control">
-                                <option>全部</option>
-                                <option>库存超出</option>
-                                <option>库存低于</option>
+                                <option value="1">全部</option>
+                                <option value="1">姓名</option>
+                                <option value="2">性别</option>
                             </select>
                         </div>
                         <input type="text" class="form-control" id="username" placeholder="请输入你要查询的内容">
@@ -73,8 +85,6 @@
                 </div>
             </form>
         </div>
-
-
 
         <!--数据表格 -->
         <div class="row">
@@ -91,38 +101,35 @@
                                     </div>
                                 </th>
                                 <th>商品名称</th>
-                                <th>供应商名称</th>
-                                <th title="平均价格是按照商品总价值除以总库存量求得的">商品平均单价</th>
-                                <th>商品类型</th>
-                                <th title="当库存数量低于100时以红色字体显示">商品库存数量</th>
-                                <th>商品总价值</th>
+                                <th>供应商</th>
+                                <th>计量单位</th>
+                                <th>库存量</th>
+                                <th class="th-fixed">建议价格</th>
+                                <th class="th-fixed">零售价</th>
+                                <th class="th-fixed">促销价</th>
+                                <th class="text-center">操作</th>
                             </tr>
                         </thead>
                         <tbody>
-                        <c:forEach items="${storages}" var="storage" varStatus="vs">
+                        <c:forEach items="${list}" var="gs" varStatus="vs">
                          <tr>
                                 <td>
                                     <div class="checkbox">
                                         <label>
-                                             ${vs.count}
+                                           ${vs.count}
                                         </label>
                                     </div>
-                       		    </td>
-                                <td>${storage.sGoodsName}</td>
-                                <td>${storage.sSupplierName}</td>
-                                <td>${storage.sAvgPrice}</td>
-                                <td>${storage.sType}</td>
-                                <td>
-                                	<c:choose>
-                                		<c:when test="${storage.sSumStockNum < 100}">
-                                			<font color="red">${storage.sSumStockNum}</font>
-                                		</c:when>
-                                		<c:otherwise>
-                                			${storage.sSumStockNum}
-                                		</c:otherwise>
-                                	</c:choose>
                                 </td>
-                                <td>${storage.sSumPrice}</td>
+                                <td>${gs.gName}</td>
+                                <td>${gs.gSupplier}</td>
+                                <td>${gs.gUnit}</td>
+                                <td>${gs.storageNumber}</td>
+                                <td>${gs.gAdvisePrice}</td>
+                                <td>${gs.gSalePrice}</td>
+                                <td>${gs.gPromotionPrice}</td>
+                                <td>
+                                    <a href="javascript:void(0)" onclick="toUpdate(this,'${gs.gId}')">修改</a>
+                                </td>
                         </tr>
                         </c:forEach>
                         </tbody>
@@ -168,6 +175,49 @@
     <script src="<%=request.getContextPath() %>/bootstrap-3.3.7-dist/js/jquery-3.1.1.min.js"></script>
     <script src="<%=request.getContextPath() %>/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
     <script>
+
+        function toUpdate(ths,id) {
+        	var promotionPriceTb = $(ths).parent().prev();
+        	promotionPriceTb.html("<input class='form-control' type='text' value='"+promotionPriceTb.html()+"'/>");
+        	var salePriceTb = $(ths).parent().prev().prev();
+        	salePriceTb.html("<input class='form-control' type='text' value='"+salePriceTb.html()+"'/>");
+        	var advisePriceTb = $(ths).parent().prev().prev().prev();
+        	advisePriceTb.html("<input class='form-control' type='text' value='"+advisePriceTb.html()+"'/>");
+        	$(ths).parent().html("<a href=\"javascript:void(0)\" onclick=\"save(this,'"+id+"')\">保存</a>")
+        }
+        
+        function save(ths,id){
+       		var promotionPriceTb = $(ths).parent().prev();
+       		var promotionPrice = promotionPriceTb.children("input:first").val();
+           	
+           	var salePriceTb = $(ths).parent().prev().prev();
+           	var salePrice = salePriceTb.children("input:first").val();
+           	
+           	
+           	
+           	var advisePriceTb = $(ths).parent().prev().prev().prev();
+           	var advisePrice = advisePriceTb.children("input:first").val()
+           
+           	
+           	$.ajax({
+           		type:'post',
+           		url:'<%=request.getContextPath() %>/goodsController?method=changePrice',
+           		data:{"gId":id,"gAdvisePrice":advisePrice,"gSalePrice":salePrice,"gPromotionPrice":promotionPrice},
+           		success:function(msg){
+           			
+           			var msg = JSON.parse(msg);
+           			if(msg.msg == "error"){
+           				alert("修改失败，请重新提交数据");
+           			}else if(msg.msg == "success"){
+           				promotionPriceTb.html(msg.object.gPromotionPrice);
+           				salePriceTb.html(msg.object.gSalePrice);
+           				advisePriceTb.html(msg.object.gAdvisePrice);
+           				alert("修改成功");
+           			}
+           		}
+           	});
+        	$(ths).parent().html("<a href=\"javascript:void(0)\" onclick=\"toUpdate(this,'"+id+"')\">修改</a>")
+        }
     </script>
 
 

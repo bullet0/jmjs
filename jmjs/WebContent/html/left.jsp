@@ -69,29 +69,7 @@
             <div id="stockManager" class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapseListGroupHeading1">
                 <div class="list-group">
                     <a class="list-group-item" href="<%=request.getContextPath() %>/storageController?method=findAll" target="right">库存盘点</a>
-                    <a class="list-group-item" href="_show-list.html" target="right">价格调整</a>
-                </div>
-            </div>
-            <ul class="nav nav-list">
-                <li class="divider"></li>
-            </ul>
-            
-            
-            
-            <div class="panel-heading" style="border-bottom: 2px solid #dddddd" data-toggle="collapse" data-target="#queryStatistics" role="tab">
-                <h4 class="panel-title">
-                    查询统计
-                    <span class="glyphicon glyphicon-chevron-up pull-right"></span>
-                </h4>
-            </div>
-            <!-- systemManager下拉标签,.panel-collapse和.collapse标明折叠元素 没有.in表示不要显示 -->
-            <div id="queryStatistics" class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapseListGroupHeading1">
-                <div class="list-group">
-                    <a class="list-group-item" href="_show-list.html" target="right">客户查询</a>
-                    <a class="list-group-item" href="_show-list.html" target="right">商品查询</a>
-                    <a class="list-group-item" href="_show-list.html" target="right">供应商查询</a>
-                    <a class="list-group-item" href="_show-list.html" target="right">销售查询</a>
-                    <a class="list-group-item" href="_show-list.html" target="right">入库查询</a>
+                    <a class="list-group-item" href="<%=request.getContextPath() %>/goodsController?method=findAllPrice" target="right">价格调整</a>
                 </div>
             </div>
             <ul class="nav nav-list">

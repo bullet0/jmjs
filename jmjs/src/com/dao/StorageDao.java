@@ -1,6 +1,7 @@
 package com.dao;
 
-import com.pojo.Storage;
+import com.pojo.StorageVO;
+
 import java.sql.Date;
 import java.util.List;
 import java.util.ArrayList;
@@ -55,112 +56,20 @@ public class StorageDao {
 		}
 	}
 
-	public void delete(Storage storage) {
-		Connection conn = this.getConnection();
-		PreparedStatement ps = null;
-		try {
-			conn.setAutoCommit(false);
-			ps = conn.prepareStatement("delete from storage where s_Id = ?");
-			
-			ps.setInt(1, storage.getsId());
-			ps.executeUpdate();
-			conn.commit();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}finally {
-			this.close(conn,ps,null);
-		}
-	}
 
 
-	public void deleteAll(String[] sIds) {
-		Connection conn = this.getConnection();
-		PreparedStatement ps = null;
-		try {
-			conn.setAutoCommit(false);
-			ps = conn.prepareStatement("delete from storage where s_Id = ?");
-			for (String sId : sIds) {
-				ps.setObject(1, sId);
-				ps.addBatch();
-			}
-			ps.executeBatch();
-			conn.commit();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}finally {
-			this.close(conn,ps,null);
-		}
-	}
-
-	public void update(Storage storage) {
-		Connection conn = this.getConnection();
-		PreparedStatement ps = null;
-		try {
-			conn.setAutoCommit(false);
-			ps = conn.prepareStatement("update storage set s_id=?,s_goods_name=?,s_supplier_name=?,s_price=?,s_type=?,s_stock_num=? where s_Id = ?");
-			ps.setObject(1, storage.getsId());
-			ps.setObject(2, storage.getsGoodsName());
-			ps.setObject(3, storage.getsSupplierName());
-			ps.setObject(4, storage.getsPrice());
-			ps.setObject(5, storage.getsType());
-			ps.setObject(6, storage.getsStockNum());
-			ps.setObject(7, storage.getsId());
-			ps.executeUpdate();
-			conn.commit();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}finally {
-			this.close(conn,ps,null);
-		}
-	}
-
-	public Storage findOne(Storage storage1) {
+	public List<StorageVO> findAll() {
 		Connection conn = this.getConnection();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		List<StorageVO> list = new ArrayList<StorageVO>();
 		try {
 			conn.setAutoCommit(false);
-			ps = conn.prepareStatement("select * from storage where s_Id=?");
-			
-			ps.setObject(1, storage1.getsId());
-			
-			rs = ps.executeQuery();
-			conn.commit();
-			Storage storage = null;
-			while (rs.next()) {
-				storage = new Storage();
-				storage.setsId(rs.getInt("s_id"));
-				storage.setsGoodsName(rs.getString("s_goods_name"));
-				storage.setsSupplierName(rs.getString("s_supplier_name"));
-				storage.setsPrice(rs.getInt("s_price"));
-				storage.setsType(rs.getString("s_type"));
-				storage.setsStockNum(rs.getInt("s_stock_num"));
-			}
-			return storage;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}finally {
-			this.close(conn,ps,rs);
-		}
-		return null;
-	}
-
-	public List<Storage> findAll() {
-		Connection conn = this.getConnection();
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		List<Storage> list = new ArrayList<Storage>();
-		try {
-			conn.setAutoCommit(false);
-			ps = conn.prepareStatement("SELECT s_id,s_goods_name , s_supplier_name,IFNULL(s_price*s_stock_num,0) totalprice,s_type,s_stock_num FROM `storage` ORDER BY s_stock_num");
+			ps = conn.prepareStatement("SELECT `s_id`, `s_goods_name`, `s_supplier_name`, ROUND(SUM(`s_price`*`s_stock_num`) / SUM(`s_stock_num`),2) avg_price,`s_type`, SUM(`s_stock_num`) num,SUM(`s_price`*`s_stock_num`) sum_price  FROM `storage` GROUP BY s_goods_name ORDER BY num");
 			rs = ps.executeQuery();
 			conn.commit();
 			while (rs.next()) {
-				Storage storage = new Storage();
+				StorageVO storage = new StorageVO();
 				
 				storage.setsId(rs.getInt("s_id"));
 				
@@ -168,11 +77,12 @@ public class StorageDao {
 				
 				storage.setsSupplierName(rs.getString("s_supplier_name"));
 				
-				storage.setsPrice(rs.getInt("totalprice"));
+				storage.setsAvgPrice(rs.getDouble("avg_price"));
 				
 				storage.setsType(rs.getString("s_type"));
 				
-				storage.setsStockNum(rs.getInt("s_stock_num"));
+				storage.setsSumStockNum(rs.getInt("num"));
+				storage.setsSumPrice(rs.getDouble("sum_price"));
 				list.add(storage);
 			}
 			return list;
@@ -185,25 +95,4 @@ public class StorageDao {
 		return null;
 	}
 	
-	public void add(Storage storage) {
-		Connection conn = this.getConnection();
-		PreparedStatement ps = null;
-		try {
-			conn.setAutoCommit(false);
-			ps = conn.prepareStatement("insert into storage(s_id,s_goods_name,s_supplier_name,s_price,s_type,s_stock_num) values (?,?,?,?,?,?)");
-			ps.setObject(1,null);
-			ps.setObject(2, storage.getsGoodsName());
-			ps.setObject(3, storage.getsSupplierName());
-			ps.setObject(4, storage.getsPrice());
-			ps.setObject(5, storage.getsType());
-			ps.setObject(6, storage.getsStockNum());
-			ps.executeUpdate();
-			conn.commit();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}finally {
-			this.close(conn,ps,null);
-		}
-	}
 }

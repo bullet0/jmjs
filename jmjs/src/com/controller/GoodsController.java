@@ -12,7 +12,10 @@ import java.text.SimpleDateFormat;
 import com.service.GoodsService;
 import com.service.SupplierService;
 import com.util.PageUtil;
+import com.google.gson.Gson;
 import com.pojo.Goods;
+import com.pojo.GoodsVO;
+import com.pojo.ResponseObj;
 import com.pojo.Supplier;
 
 import java.sql.Date;
@@ -45,6 +48,10 @@ public class GoodsController extends HttpServlet{
 			this.deleteAll(req,resp);
 		}else if("getAdvisePrice".equals(method)){
 			this.getAdvisePrice(req,resp);
+		}else if("findAllPrice".equals(method)){
+			this.findAllPrice(req,resp);
+		}else if("changePrice".equals(method)){
+			this.changePrice(req,resp);
 		}else{
 			System.out.println("用户请求路径有误");
 			resp.sendRedirect("404.jsp");
@@ -52,6 +59,67 @@ public class GoodsController extends HttpServlet{
 		
 		
 		
+	}
+
+
+
+	private void changePrice(HttpServletRequest req, HttpServletResponse resp) {
+		Goods goods = new Goods();
+		Object value = null;
+		
+		
+		String gId = req.getParameter("gId");
+		if(gId != null){
+			value = Integer.valueOf(gId);
+		}
+		
+		goods.setgId((Integer)value);
+		
+		
+		String gAdvisePrice = req.getParameter("gAdvisePrice");
+		goods.setgAdvisePrice(Double.valueOf(gAdvisePrice));
+		String gSalePrice = req.getParameter("gSalePrice");
+		goods.setgSalePrice(Double.valueOf(gSalePrice));
+		String gPromotionPrice = req.getParameter("gPromotionPrice");
+		goods.setgPromotionPrice(Double.valueOf(gPromotionPrice));
+		
+		int count = service.changePrice(goods);
+		try {
+			PrintWriter out = resp.getWriter();
+			if(count == 0) {
+				ResponseObj obj = new ResponseObj();
+				obj.setMsg("error");
+				Gson gson = new Gson();
+				String json = gson.toJson(obj);
+				out.print(json);
+			}else {
+				ResponseObj obj = new ResponseObj();
+				obj.setMsg("success");
+				obj.setObject(goods);
+				Gson gson = new Gson();
+				String json = gson.toJson(obj);
+				out.print(json);
+			}
+			out.flush();
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+
+
+	private void findAllPrice(HttpServletRequest req, HttpServletResponse resp) {
+		List<GoodsVO> list = service.findAllPrice();
+		req.setAttribute("list", list);
+		try {
+			req.getRequestDispatcher("/html/goods_price_list.jsp").forward(req, resp);
+		} catch (ServletException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 
