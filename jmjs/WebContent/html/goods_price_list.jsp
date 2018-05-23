@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -124,9 +125,9 @@
                                 <td>${gs.gSupplier}</td>
                                 <td>${gs.gUnit}</td>
                                 <td>${gs.storageNumber}</td>
-                                <td>${gs.gAdvisePrice}</td>
-                                <td>${gs.gSalePrice}</td>
-                                <td>${gs.gPromotionPrice}</td>
+                                <td><fmt:formatNumber value="${gs.gAdvisePrice}" pattern="0.00"></fmt:formatNumber></td>
+                                <td><fmt:formatNumber value="${gs.gSalePrice}" pattern="0.00"></fmt:formatNumber></td>
+                                <td><fmt:formatNumber value="${gs.gPromotionPrice}" pattern="0.00"></fmt:formatNumber></td>
                                 <td>
                                     <a href="javascript:void(0)" onclick="toUpdate(this,'${gs.gId}')">修改</a>
                                 </td>
