@@ -204,11 +204,12 @@
            		url:'<%=request.getContextPath() %>/goodsController?method=changePrice',
            		data:{"gId":id,"gAdvisePrice":advisePrice,"gSalePrice":salePrice,"gPromotionPrice":promotionPrice},
            		success:function(msg){
-           			
+           			alert(msg)
            			var msg = JSON.parse(msg);
            			if(msg.msg == "error"){
            				alert("修改失败，请重新提交数据");
            			}else if(msg.msg == "success"){
+           				
            				promotionPriceTb.html(msg.object.gPromotionPrice);
            				salePriceTb.html(msg.object.gSalePrice);
            				advisePriceTb.html(msg.object.gAdvisePrice);

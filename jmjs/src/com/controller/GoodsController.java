@@ -2,6 +2,7 @@ package com.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Type;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,6 +14,11 @@ import com.service.GoodsService;
 import com.service.SupplierService;
 import com.util.PageUtil;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.pojo.Goods;
 import com.pojo.GoodsVO;
 import com.pojo.ResponseObj;
@@ -20,6 +26,7 @@ import com.pojo.Supplier;
 
 import java.sql.Date;
 import java.util.List;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 @WebServlet("/goodsController")
 public class GoodsController extends HttpServlet{
@@ -96,7 +103,17 @@ public class GoodsController extends HttpServlet{
 				ResponseObj obj = new ResponseObj();
 				obj.setMsg("success");
 				obj.setObject(goods);
-				Gson gson = new Gson();
+				//在javascript中20和20.0其实是相等的，都是number类型，即javascript中没有整数类型一说。
+				//就会把数字类型的值都转换成了Double类型(此时map中key为“id”的值是一个Double类型，为20.0)
+				//我们将double转成字符串格式化一下，就好了
+				Gson gson = new GsonBuilder().
+				        registerTypeAdapter(Double.class, new JsonSerializer<Double>() {
+				            @Override
+				            public JsonElement serialize(Double src, Type typeOfSrc, JsonSerializationContext context) {
+				            	DecimalFormat fmt = new DecimalFormat("0.00"); 
+				              return new JsonPrimitive(fmt.format(src));
+				            }
+				          }).create();
 				String json = gson.toJson(obj);
 				out.print(json);
 			}
