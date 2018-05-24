@@ -29,5 +29,10 @@ public class CustomerService {
 	public void deleteAll(String[] cIds) {
 		dao.deleteAll(cIds);
 	}
+
+	public List<Customer> findAllCusIdAndName() {
+		// TODO Auto-generated method stub
+		return dao.findAllCusIdAndName();
+	}
 	
 }

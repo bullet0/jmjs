@@ -52,7 +52,7 @@
             <div id="bznessManager" class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapseListGroupHeading1">
                 <div class="list-group">
                     <a class="list-group-item" href="<%=request.getContextPath() %>/depotController?method=findAll" target="right">进货管理</a>
-                    <a class="list-group-item" href="_show-list.html" target="right">销售管理</a>
+                    <a class="list-group-item" href="<%=request.getContextPath() %>/saleController?method=findAll" target="right">销售管理</a>
                 </div>
             </div>
             <ul class="nav nav-list">
@@ -68,7 +68,7 @@
             <!-- systemManager下拉标签,.panel-collapse和.collapse标明折叠元素 没有.in表示不要显示 -->
             <div id="stockManager" class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapseListGroupHeading1">
                 <div class="list-group">
-                    <a class="list-group-item" href="<%=request.getContextPath() %>/storageController?method=findAll" target="right">库存盘点</a>
+                    <a class="list-group-item" href="<%=request.getContextPath() %>/storageController?method=findAll" id="storage" target="right">库存盘点</a>
                     <a class="list-group-item" href="<%=request.getContextPath() %>/goodsController?method=findAllPrice" target="right">价格调整</a>
                 </div>
             </div>
@@ -141,6 +141,26 @@
             });
 
 
+        });
+        
+        
+        $(function(){
+        	$.ajax({
+        		tyep:'post',
+        		url:'<%=request.getContextPath() %>/storageController?method=getDangerCount',
+        		success:function(msg){
+        			var obj = JSON.parse(msg);
+        			if(obj.msg == "success"){
+        				if(obj.object != 0){
+        					$("#storage").prepend("<span class=\"badge\" style='background-color:rgba(169, 68, 66, 1)'>"+obj.object+"</span>");
+        				}
+        			}else{
+        				alert("没有查询到超过阈值的库存数据")
+        			}
+        			
+        		}
+        	});
+        	
         });
     </script>
 

@@ -3,18 +3,28 @@ package com.controller;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
+
+import com.service.CustomerService;
+import com.service.GoodsService;
 import com.service.SaleService;
+import com.pojo.Customer;
+import com.pojo.Goods;
 import com.pojo.Sale;
+import com.pojo.Supplier;
+
 import java.sql.Date;
 import java.util.List;
 import java.text.ParseException;
-
+@WebServlet("/saleController")
 public class SaleController extends HttpServlet{
 	private SaleService service = new SaleService();
+	private GoodsService goodsService = new GoodsService();
+	private CustomerService customerService = new CustomerService();
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		req.setCharacterEncoding("utf-8");
@@ -130,7 +140,6 @@ public class SaleController extends HttpServlet{
 			value = Integer.valueOf(customerId);
 		}
 		
-		sale.setCustomerId((Integer)value);
 		
 		
 		String customerName = req.getParameter("customerName");
@@ -220,7 +229,6 @@ public class SaleController extends HttpServlet{
 			value = Integer.valueOf(customerId);
 		}
 		
-		sale.setCustomerId((Integer)value);
 		
 		
 		String customerName = req.getParameter("customerName");
@@ -239,9 +247,15 @@ public class SaleController extends HttpServlet{
 	}
 
 	private void toAdd(HttpServletRequest req, HttpServletResponse resp) {
+		List<Goods> goods = goodsService.findAllGoodIdAndName();
+		req.setAttribute("goods", goods);
+		List<Customer> customers = customerService.findAllCusIdAndName();
+		req.setAttribute("customers", customers);
+		
 		try {
-			resp.sendRedirect(req.getContextPath()+"/添加页面");
-		} catch (IOException e) {
+			req.getRequestDispatcher("/html/sale_add.jsp").forward(req, resp);
+		} catch (ServletException | IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -250,7 +264,7 @@ public class SaleController extends HttpServlet{
 		List<Sale> sales = service.findAll();
 		req.setAttribute("sales",sales);
 		try {
-			req.getRequestDispatcher("/查询页面").forward(req, resp);
+			req.getRequestDispatcher("/html/sale_list.jsp").forward(req, resp);
 		} catch (ServletException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

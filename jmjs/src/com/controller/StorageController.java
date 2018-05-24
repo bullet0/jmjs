@@ -1,6 +1,7 @@
 package com.controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import com.service.StorageService;
+import com.google.gson.Gson;
+import com.pojo.ResponseObj;
 import com.pojo.StorageVO;
 
 import java.sql.Date;
@@ -26,6 +29,8 @@ public class StorageController extends HttpServlet{
 		
 		if("findAll".equals(method)) {
 			this.findAll(req,resp);
+		}else if("getDangerCount".equals(method)) {
+			this.getDangerCount(req,resp);
 		}else{
 			System.out.println("用户请求路径有误");
 			resp.sendRedirect("404.jsp");
@@ -33,6 +38,24 @@ public class StorageController extends HttpServlet{
 		
 		
 		
+	}
+
+	private void getDangerCount(HttpServletRequest req, HttpServletResponse resp) {
+		int count = service.getDangerCount();
+		try {
+			PrintWriter out = resp.getWriter();
+			ResponseObj obj = new ResponseObj();
+			obj.setMsg("success");
+			obj.setObject(count);
+			Gson gson = new Gson();
+			String json = gson.toJson(obj);
+			out.print(json);
+			out.flush();
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void findAll(HttpServletRequest req, HttpServletResponse resp) {

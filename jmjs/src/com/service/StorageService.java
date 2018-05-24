@@ -11,6 +11,11 @@ public class StorageService {
 	public List<StorageVO> findAll() {
 		return dao.findAll();
 	}
+
+	public int getDangerCount() {
+		// TODO Auto-generated method stub
+		return dao.getDangerCount();
+	}
 	
 	
 }

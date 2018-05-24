@@ -1,6 +1,8 @@
 package com.dao;
 
 import com.pojo.SaleDetail;
+import com.util.BaseDao;
+
 import java.sql.Date;
 import java.util.List;
 import java.util.ArrayList;
@@ -12,48 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class SaleDetailDao {
-	public Connection getConnection() {
-		Connection connection = null;
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			connection = DriverManager.getConnection("jdbc:mysql:///jmjs?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Hongkong","root","123456");
-		} catch (ClassNotFoundException  e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return connection;
-	}
-
-	public void close(Connection conn,Statement stm,ResultSet rs) {
-		if(rs != null) {
-			try {
-				rs.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		if(stm != null) {
-			try {
-				stm.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		if(conn != null) {
-			try {
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
+public class SaleDetailDao  extends BaseDao {
 
 	public void delete(SaleDetail saleDetail) {
 		Connection conn = this.getConnection();
@@ -133,11 +94,9 @@ public class SaleDetailDao {
 			while (rs.next()) {
 				saleDetail = new SaleDetail();
 				saleDetail.setSdId(rs.getInt("sd_id"));
-				saleDetail.setSaleId(rs.getInt("sale_id"));
-				saleDetail.setGoodsId(rs.getInt("goods_id"));
 				saleDetail.setSalePrice(rs.getInt("sale_price"));
 				saleDetail.setSaleNumber(rs.getInt("sale_number"));
-				saleDetail.setPurchasePrice(rs.getInt("purchase_price"));
+//				saleDetail.setPurchasePrice(rs.getInt("purchase_price"));
 			}
 			return saleDetail;
 		} catch (SQLException e) {
@@ -164,15 +123,12 @@ public class SaleDetailDao {
 				
 				saleDetail.setSdId(rs.getInt("sd_id"));
 				
-				saleDetail.setSaleId(rs.getInt("sale_id"));
-				
-				saleDetail.setGoodsId(rs.getInt("goods_id"));
 				
 				saleDetail.setSalePrice(rs.getInt("sale_price"));
 				
 				saleDetail.setSaleNumber(rs.getInt("sale_number"));
 				
-				saleDetail.setPurchasePrice(rs.getInt("purchase_price"));
+//				saleDetail.setPurchasePrice(rs.getInt("purchase_price"));
 				list.add(saleDetail);
 			}
 			return list;

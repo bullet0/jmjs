@@ -1,6 +1,8 @@
 package com.dao;
 
 import com.pojo.Customer;
+import com.util.BaseDao;
+
 import java.sql.Date;
 import java.util.List;
 import java.util.ArrayList;
@@ -12,49 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class CustomerDao {
-	public Connection getConnection() {
-		Connection connection = null;
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			connection = DriverManager.getConnection("jdbc:mysql:///jmjs?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Hongkong","root","123456");
-		} catch (ClassNotFoundException  e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return connection;
-	}
-
-	public void close(Connection conn,Statement stm,ResultSet rs) {
-		if(rs != null) {
-			try {
-				rs.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		if(stm != null) {
-			try {
-				stm.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		if(conn != null) {
-			try {
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-
+public class CustomerDao extends BaseDao {
 	public void delete(Customer customer) {
 		Connection conn = this.getConnection();
 		PreparedStatement ps = null;
@@ -221,5 +181,32 @@ public class CustomerDao {
 		}finally {
 			this.close(conn,ps,null);
 		}
+	}
+
+
+	public List<Customer> findAllCusIdAndName() {
+		Connection conn = this.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		List<Customer> list = new ArrayList<Customer>();
+		try {
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement("SELECT c_id,c_name FROM customer");
+			rs = ps.executeQuery();
+			conn.commit();
+			while (rs.next()) {
+				Customer customer = new Customer();
+				customer.setcId(rs.getInt("c_id"));
+				customer.setcName(rs.getString("c_name"));
+				list.add(customer);
+			}
+			return list;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			this.close(conn,ps,rs);
+		}
+		return null;
 	}
 }

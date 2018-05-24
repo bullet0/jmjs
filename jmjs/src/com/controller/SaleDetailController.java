@@ -100,7 +100,6 @@ public class SaleDetailController extends HttpServlet{
 			value = Integer.valueOf(saleId);
 		}
 		
-		saleDetail.setSaleId((Integer)value);
 		
 		
 		String goodsId = req.getParameter("goodsId");
@@ -108,7 +107,6 @@ public class SaleDetailController extends HttpServlet{
 			value = Integer.valueOf(goodsId);
 		}
 		
-		saleDetail.setGoodsId((Integer)value);
 		
 		
 		String salePrice = req.getParameter("salePrice");
@@ -132,7 +130,6 @@ public class SaleDetailController extends HttpServlet{
 			value = Integer.valueOf(purchasePrice);
 		}
 		
-		saleDetail.setPurchasePrice((Integer)value);
 		
 		service.update(saleDetail);
 		try {
@@ -185,7 +182,6 @@ public class SaleDetailController extends HttpServlet{
 			value = Integer.valueOf(saleId);
 		}
 		
-		saleDetail.setSaleId((Integer)value);
 		
 		
 		String goodsId = req.getParameter("goodsId");
@@ -193,7 +189,6 @@ public class SaleDetailController extends HttpServlet{
 			value = Integer.valueOf(goodsId);
 		}
 		
-		saleDetail.setGoodsId((Integer)value);
 		
 		
 		String salePrice = req.getParameter("salePrice");
@@ -217,7 +212,6 @@ public class SaleDetailController extends HttpServlet{
 			value = Integer.valueOf(purchasePrice);
 		}
 		
-		saleDetail.setPurchasePrice((Integer)value);
 		
 		
 		service.add(saleDetail);

@@ -2,6 +2,7 @@ package com.dao;
 
 import com.pojo.Goods;
 import com.pojo.GoodsVO;
+import com.util.BaseDao;
 import com.util.PageUtil;
 
 import java.sql.Date;
@@ -15,49 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class GoodsDao {
-	public Connection getConnection() {
-		Connection connection = null;
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			connection = DriverManager.getConnection("jdbc:mysql:///jmjs?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Hongkong","root","123456");
-		} catch (ClassNotFoundException  e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return connection;
-	}
-
-	public void close(Connection conn,Statement stm,ResultSet rs) {
-		if(rs != null) {
-			try {
-				rs.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		if(stm != null) {
-			try {
-				stm.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		if(conn != null) {
-			try {
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-
+public class GoodsDao extends BaseDao  {
 	public void delete(Goods goods) {
 		Connection conn = this.getConnection();
 		PreparedStatement ps = null;

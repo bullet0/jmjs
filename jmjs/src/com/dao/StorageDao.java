@@ -1,6 +1,7 @@
 package com.dao;
 
 import com.pojo.StorageVO;
+import com.util.BaseDao;
 
 import java.sql.Date;
 import java.util.List;
@@ -13,50 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class StorageDao {
-	public Connection getConnection() {
-		Connection connection = null;
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			connection = DriverManager.getConnection("jdbc:mysql:///jmjs?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Hongkong","root","123456");
-		} catch (ClassNotFoundException  e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return connection;
-	}
-
-	public void close(Connection conn,Statement stm,ResultSet rs) {
-		if(rs != null) {
-			try {
-				rs.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		if(stm != null) {
-			try {
-				stm.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		if(conn != null) {
-			try {
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-
-
+public class StorageDao extends BaseDao  {
 
 	public List<StorageVO> findAll() {
 		Connection conn = this.getConnection();
@@ -93,6 +51,31 @@ public class StorageDao {
 			this.close(conn,ps,rs);
 		}
 		return null;
+	}
+
+	public int getDangerCount() {
+		// TODO Auto-generated method stub
+		Connection conn = this.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		List<StorageVO> list = new ArrayList<StorageVO>();
+		try {
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement("SELECT COUNT(*) FROM (SELECT SUM(`s_stock_num`) num  FROM `storage`  GROUP BY s_goods_name HAVING num<100) a ");
+			rs = ps.executeQuery();
+			conn.commit();
+			int count = 0;
+			while (rs.next()) {
+				count = rs.getInt(1);
+			}
+			return count;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			this.close(conn,ps,rs);
+		}
+		return 0;
 	}
 	
 }

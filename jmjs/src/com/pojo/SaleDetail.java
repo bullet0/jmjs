@@ -5,16 +5,12 @@ import java.sql.Date;
 public class SaleDetail{
 
 	private Integer sdId;
-	private Integer saleId;
-	private Integer goodsId;
+	private Sale saleId;
+	private Goods goodsId;
 	private Integer salePrice;
 	private Integer saleNumber;
-	private Integer purchasePrice;
+	private Double purchasePrice;
 
-
-	
-	
-	
 	public Integer getSdId() {
 		return sdId;
 	}
@@ -24,42 +20,34 @@ public class SaleDetail{
 	}
 	
 	
-	
-	
-	
-	
-	
-	
-	public Integer getSaleId() {
+	/**
+	 * @return the saleId
+	 */
+	public Sale getSaleId() {
 		return saleId;
 	}
 
-	public void setSaleId(Integer saleId) {
+	/**
+	 * @param saleId the saleId to set
+	 */
+	public void setSaleId(Sale saleId) {
 		this.saleId = saleId;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	public Integer getGoodsId() {
+
+	/**
+	 * @return the goodsId
+	 */
+	public Goods getGoodsId() {
 		return goodsId;
 	}
 
-	public void setGoodsId(Integer goodsId) {
+	/**
+	 * @param goodsId the goodsId to set
+	 */
+	public void setGoodsId(Goods goodsId) {
 		this.goodsId = goodsId;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
 	public Integer getSalePrice() {
 		return salePrice;
 	}
@@ -82,27 +70,21 @@ public class SaleDetail{
 	public void setSaleNumber(Integer saleNumber) {
 		this.saleNumber = saleNumber;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	public Integer getPurchasePrice() {
+
+	/**
+	 * @return the purchasePrice
+	 */
+	public Double getPurchasePrice() {
 		return purchasePrice;
 	}
 
-	public void setPurchasePrice(Integer purchasePrice) {
+	/**
+	 * @param purchasePrice the purchasePrice to set
+	 */
+	public void setPurchasePrice(Double purchasePrice) {
 		this.purchasePrice = purchasePrice;
 	}
 	
-	
-	
-	
-	
-
 }
 
 
