@@ -2,6 +2,7 @@ package com.dao;
 
 import com.pojo.Supplier;
 import com.util.BaseDao;
+import com.util.PageUtil;
 
 import java.sql.Date;
 import java.util.List;
@@ -198,6 +199,88 @@ public class SupplierDao extends BaseDao  {
 				supplier.setsId(rs.getInt("s_id"));
 				
 				supplier.setsName(rs.getString("s_name"));
+				list.add(supplier);
+			}
+			return list;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			this.close(conn,ps,rs);
+		}
+		return null;
+	}
+
+
+	public int getTotalCount(PageUtil page) {
+		Connection conn = this.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement("select count(*) from supplier where LOCATE(?, `s_name`)>0 or LOCATE(?, `s_phone`) or LOCATE(?, `s_address`) or LOCATE(?, `s_email`) or LOCATE(?, `s_con_mobile`)  or LOCATE(?, `s_con_name`) ");
+			
+			ps.setObject(1, page.getCondition());
+			ps.setObject(2, page.getCondition());
+			ps.setObject(3, page.getCondition());
+			ps.setObject(4, page.getCondition());
+			ps.setObject(5, page.getCondition());
+			ps.setObject(6, page.getCondition());
+			
+			rs = ps.executeQuery();
+			conn.commit();
+			rs.next();
+			
+			return rs.getInt(1);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			this.close(conn,ps,rs);
+		}
+		return -1;
+	}
+
+
+	public List<Supplier> findAllByPage(PageUtil page) {
+		Connection conn = this.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		List<Supplier> list = new ArrayList<Supplier>();
+		try {
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement("select * from supplier   where LOCATE(?, `s_name`)>0 or LOCATE(?, `s_phone`) or LOCATE(?, `s_address`) or LOCATE(?, `s_email`) or LOCATE(?, `s_con_mobile`)  or LOCATE(?, `s_con_name`) limit ?,?");
+			ps.setObject(1, page.getCondition());
+			ps.setObject(2, page.getCondition());
+			ps.setObject(3, page.getCondition());
+			ps.setObject(4, page.getCondition());
+			ps.setObject(5, page.getCondition());
+			ps.setObject(6, page.getCondition());
+			ps.setObject(7, (page.getCurPage()-1)*page.getPageSize());
+			ps.setObject(8, page.getPageSize());
+		
+			rs = ps.executeQuery();
+			conn.commit();
+			while (rs.next()) {
+				Supplier supplier = new Supplier();
+				
+				supplier.setsId(rs.getInt("s_id"));
+				
+				supplier.setsName(rs.getString("s_name"));
+				
+				supplier.setsPhone(rs.getString("s_phone"));
+				
+				supplier.setsAddress(rs.getString("s_address"));
+				
+				supplier.setsEmail(rs.getString("s_email"));
+				
+				supplier.setsConMobile(rs.getString("s_con_mobile"));
+				
+				supplier.setsConName(rs.getString("s_con_name"));
+				
+				supplier.setsPostCode(rs.getString("s_post_code"));
+				
+				supplier.setsAccount(rs.getString("s_account"));
 				list.add(supplier);
 			}
 			return list;

@@ -1,7 +1,10 @@
 package com.service;
 
 import com.dao.SupplierDao;
+import com.pojo.Goods;
 import com.pojo.Supplier;
+import com.util.PageUtil;
+
 import java.util.List;
 
 public class SupplierService {
@@ -33,6 +36,17 @@ public class SupplierService {
 	public List<Supplier> findAllSupIdAndName() {
 		// TODO Auto-generated method stub
 		return dao.findAllSupIdAndName();
+	}
+
+	public PageUtil findAllByPage(PageUtil page) {
+		int count = dao.getTotalCount(page);
+		page.setTotalCount(count);
+		
+		page.setTotalPage();
+		
+		List<Supplier> list = dao.findAllByPage(page);
+		page.setList(list);
+		return page;
 	}
 	
 }

@@ -9,6 +9,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import java.text.SimpleDateFormat;
 import com.service.GoodsService;
 import com.service.SupplierService;
@@ -34,13 +36,11 @@ public class GoodsController extends HttpServlet{
 	private SupplierService supplierService = new SupplierService();
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		req.setCharacterEncoding("utf-8");
-		resp.setContentType("text/html;charset=utf-8");
 		
 		String method = req.getParameter("method");
 		
-		if("findAll".equals(method)) {
-			this.findAll(req,resp);
+		if("findAllByPage".equals(method)) {
+			this.findAllByPage(req,resp);
 		}else if("toAdd".equals(method)){
 			this.toAdd(req,resp);
 		}else if("add".equals(method)){
@@ -49,14 +49,12 @@ public class GoodsController extends HttpServlet{
 			this.toUpdate(req,resp);
 		}else if("update".equals(method)){
 			this.update(req,resp);
-		}else if("delete".equals(method)){
-			this.delete(req,resp);
 		}else if("deleteAll".equals(method)){
 			this.deleteAll(req,resp);
 		}else if("getAdvisePrice".equals(method)){
 			this.getAdvisePrice(req,resp);
-		}else if("findAllPrice".equals(method)){
-			this.findAllPrice(req,resp);
+		}else if("findAllPriceByPage".equals(method)){
+			this.findAllPriceByPage(req,resp);
 		}else if("changePrice".equals(method)){
 			this.changePrice(req,resp);
 		}else{
@@ -65,6 +63,79 @@ public class GoodsController extends HttpServlet{
 		}
 		
 		
+		
+	}
+
+
+	private void findAllPriceByPage(HttpServletRequest req, HttpServletResponse resp) {
+		HttpSession session = req.getSession();
+		PageUtil page = new PageUtil();
+		String condition = req.getParameter("condition");
+		if(condition == null) {
+			if(session.getAttribute("condition") == null) {
+				page.setCondition("");
+			}else {
+				page.setCondition(session.getAttribute("condition").toString());
+			}
+		}else {
+			page.setCondition(condition);
+			session.setAttribute("condition",condition);
+		}
+		
+		String curPage = req.getParameter("curPage");
+		if(curPage == null) {
+			page.setCurPage(1);
+		}else {
+			page.setCurPage(Integer.valueOf(curPage));
+		}
+		
+		page = service.findAllPriceByPage(page);
+		req.setAttribute("pageUtil",page);
+		
+		try {
+			req.getRequestDispatcher("/html/goods_price_list.jsp").forward(req, resp);
+		} catch (ServletException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+
+
+	private void findAllByPage(HttpServletRequest req, HttpServletResponse resp) {
+		HttpSession session = req.getSession();
+		PageUtil page = new PageUtil();
+		String condition = req.getParameter("condition");
+		if(condition == null) {
+			if(session.getAttribute("condition") == null) {
+				page.setCondition("");
+			}else {
+				page.setCondition(session.getAttribute("condition").toString());
+			}
+		}else {
+			page.setCondition(condition);
+			session.setAttribute("condition",condition);
+		}
+		
+		String curPage = req.getParameter("curPage");
+		if(curPage == null) {
+			page.setCurPage(1);
+		}else {
+			page.setCurPage(Integer.valueOf(curPage));
+		}
+		
+		page = service.findAllByPage(page);
+		req.setAttribute("pageUtil",page);
+		try {
+			req.getRequestDispatcher("/html/goods_list.jsp").forward(req, resp);
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 
@@ -128,16 +199,6 @@ public class GoodsController extends HttpServlet{
 
 
 
-	private void findAllPrice(HttpServletRequest req, HttpServletResponse resp) {
-		List<GoodsVO> list = service.findAllPrice();
-		req.setAttribute("list", list);
-		try {
-			req.getRequestDispatcher("/html/goods_price_list.jsp").forward(req, resp);
-		} catch (ServletException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 
 
 
@@ -155,36 +216,13 @@ public class GoodsController extends HttpServlet{
 		}
 	}
 
-
-
-	private void delete(HttpServletRequest req, HttpServletResponse resp) {
-		Object value = null;
-		
-		String gId = req.getParameter("gId");
-		
-		if(gId != null){
-			value = Integer.valueOf(gId);
-		}
-		
-		
-		Goods goods = new Goods();
-		
-		goods.setgId((Integer)value);
-		service.delete(goods);
-		try {
-			resp.sendRedirect(req.getContextPath()+"/goodsController?method=findAll");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 	private void deleteAll(HttpServletRequest req, HttpServletResponse resp) {
 		String[] gIds = req.getParameterValues("gId");
 		if(gIds != null) {
 			service.deleteAll(gIds);
 		} 
 		try {
-			resp.sendRedirect(req.getContextPath()+"/goodsController?method=findAll");
+			resp.sendRedirect(req.getContextPath()+"/goodsController?method=findAllByPage");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -294,7 +332,7 @@ public class GoodsController extends HttpServlet{
 		
 		service.update(goods);
 		try {
-			resp.sendRedirect(req.getContextPath()+"/goodsController?method=findAll");
+			resp.sendRedirect(req.getContextPath()+"/goodsController?method=findAllByPage");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -436,7 +474,7 @@ public class GoodsController extends HttpServlet{
 		
 		service.add(goods);
 		try {
-			resp.sendRedirect(req.getContextPath()+"/goodsController?method=findAll");
+			resp.sendRedirect(req.getContextPath()+"/goodsController?method=findAllByPage");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -454,33 +492,4 @@ public class GoodsController extends HttpServlet{
 		}
 	}
 
-	private void findAll(HttpServletRequest req, HttpServletResponse resp) {
-		PageUtil page = new PageUtil();
-		
-		String curPage = req.getParameter("curPage");
-		if(curPage != null) {
-			page.setCurPage(Integer.valueOf(curPage));
-		}else {
-			page.setCurPage(1);
-		}
-		
-		String condition = req.getParameter("condition");
-		if(condition != null) {
-			page.setCondition(condition);
-		}else {
-			page.setCondition("");
-		}
-		
-		page = service.findAll(page);
-		req.setAttribute("pageUtil",page);
-		try {
-			req.getRequestDispatcher("/html/goods_list.jsp").forward(req, resp);
-		} catch (ServletException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 }

@@ -7,6 +7,7 @@ import com.pojo.Sale;
 import com.pojo.SaleDetail;
 import com.pojo.Supplier;
 import com.util.BaseDao;
+import com.util.PageUtil;
 
 import java.sql.Date;
 import java.util.List;
@@ -328,5 +329,134 @@ public class SaleDao extends BaseDao {
 		}finally {
 			this.close(conn,ps,null);
 		}
+	}
+
+
+	public int getTotalCount(PageUtil page) {
+		Connection conn = this.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement("SELECT count(*) c FROM `sale`  where  LOCATE(?, s_no)>0 or LOCATE(?, customer_name)>0 order by s_sale_date");
+			ps.setString(1, page.getCondition());
+			ps.setString(2, page.getCondition());
+			rs = ps.executeQuery();
+			conn.commit();
+			int count = 0;
+			while (rs.next()) {
+				count = rs.getInt("c");
+			}
+			return count;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			this.close(conn,ps,rs);
+		}
+		return 0;
+	}
+
+
+	public List<Sale> findAllByPage(PageUtil page) {
+		Connection conn = this.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		List<Sale> list = new ArrayList<Sale>();
+		try {
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement("SELECT * FROM `sale` s LEFT JOIN `sale_detail` sd ON s.s_id = sd.sale_id LEFT JOIN goods g ON g.g_id = sd.goods_id where  LOCATE(?, s_no)>0 or LOCATE(?, customer_name)>0 order by s.s_sale_date limit ?,?");
+			
+			ps.setString(1, page.getCondition());
+			ps.setString(2, page.getCondition());
+			ps.setInt(3, (page.getCurPage()-1)*page.getPageSize());
+			ps.setInt(4, page.getPageSize());
+			
+			rs = ps.executeQuery();
+			conn.commit();
+			while (rs.next()) {
+				//先循环遍历之前数据，如果能添加进去，就不再重复添加了，如果添加不进去，说明要新增一个数据，这才新增数据
+				//当前数据添加状态，默认false，未添加
+				boolean flag = false;
+				//先循环遍历之前数据
+				
+				for(Sale sale1:list) {
+					if(sale1.getsId() == rs.getInt("s_id")) {
+						//如果当前遍历到的进货单已经被添加了，就只添加其他属性
+						if(rs.getInt("sd_id") != 0) {
+							SaleDetail saleDetail = new SaleDetail();
+							saleDetail.setSdId(rs.getInt("sd_id"));
+							saleDetail.setSalePrice(rs.getDouble("sale_price"));
+							saleDetail.setSaleNumber(rs.getInt("sale_number"));
+							
+							Goods goods = new Goods();
+							goods.setgId(rs.getInt("g_id"));
+							goods.setgName(rs.getString("g_name"));
+							goods.setgProduce(rs.getString("g_produce"));
+							goods.setgProductionDate(rs.getDate("g_production_date"));
+							goods.setgReleaseDate(rs.getDate("g_release_date"));
+							goods.setgType(rs.getString("g_type"));
+							goods.setgUnit(rs.getString("g_unit"));
+							goods.setgRemark(rs.getString("g_remark"));
+							goods.setgSupplier(rs.getString("g_supplier"));
+							goods.setgAdvisePrice(rs.getDouble("g_advise_price"));
+							goods.setgPromotionPrice(rs.getDouble("g_promotion_price"));
+							goods.setgSalePrice(rs.getDouble("g_sale_price"));
+							saleDetail.setGoodsId(goods);
+							
+							sale1.getSaleDetails().add(saleDetail);
+						}
+						flag = true;
+						//填完就退出循环，因为当前这一条数据已经被添加了
+						break;
+					}
+				}
+				//当第一次循环时，list还没有数据，会进入这个方法
+				//当上面循环过后，还没有添加，就进入这个方法
+				if(list == null || list.size()==0 || flag == false) {
+					//没添加
+					Sale sale = new Sale();
+					sale.setsId(rs.getInt("s_id"));
+					sale.setsNo(rs.getString("s_no"));
+					sale.setsVarietyNum(rs.getInt("s_variety_num"));
+					sale.setsTotalPrice(rs.getInt("s_total_price"));
+					sale.setsSaleDate(rs.getString("s_sale_date"));
+					sale.setsSettlementWay(rs.getString("s_settlement_way"));
+					sale.setCustomerName(rs.getString("customer_name"));
+					if(rs.getInt("sd_id") != 0) {
+						SaleDetail saleDetail = new SaleDetail();
+						saleDetail.setSdId(rs.getInt("sd_id"));
+						saleDetail.setSalePrice(rs.getDouble("sale_price"));
+						saleDetail.setSaleNumber(rs.getInt("sale_number"));
+						
+						Goods goods = new Goods();
+						goods.setgId(rs.getInt("g_id"));
+						goods.setgName(rs.getString("g_name"));
+						goods.setgProduce(rs.getString("g_produce"));
+						goods.setgProductionDate(rs.getDate("g_production_date"));
+						goods.setgReleaseDate(rs.getDate("g_release_date"));
+						goods.setgType(rs.getString("g_type"));
+						goods.setgUnit(rs.getString("g_unit"));
+						goods.setgRemark(rs.getString("g_remark"));
+						goods.setgSupplier(rs.getString("g_supplier"));
+						goods.setgAdvisePrice(rs.getDouble("g_advise_price"));
+						goods.setgPromotionPrice(rs.getDouble("g_promotion_price"));
+						goods.setgSalePrice(rs.getDouble("g_sale_price"));
+						saleDetail.setGoodsId(goods);
+						
+						sale.getSaleDetails().add(saleDetail);
+					}
+					list.add(sale);
+				}
+					
+			}
+			return list;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			this.close(conn,ps,rs);
+		}
+		return null;
 	}
 }

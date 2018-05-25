@@ -7,8 +7,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import java.text.SimpleDateFormat;
 import com.service.CustomerService;
+import com.util.PageUtil;
 import com.pojo.Customer;
 import java.sql.Date;
 import java.util.List;
@@ -18,23 +21,20 @@ public class CustomerController extends HttpServlet{
 	private CustomerService service = new CustomerService();
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		req.setCharacterEncoding("utf-8");
-		resp.setContentType("text/html;charset=utf-8");
-		 
 		String method = req.getParameter("method");
 		
-		if("findAll".equals(method)) {
-			this.findAll(req,resp);
+		if("findAllByPage".equals(method)) {
+			this.findAllByPage(req,resp);
 		}else if("toAdd".equals(method)){
 			this.toAdd(req,resp);
+		}else if("findAll".equals(method)){
+			this.findAll(req,resp);
 		}else if("add".equals(method)){
 			this.add(req,resp);
 		}else if("toUpdate".equals(method)){
 			this.toUpdate(req,resp);
 		}else if("update".equals(method)){
 			this.update(req,resp);
-		}else if("delete".equals(method)){
-			this.delete(req,resp);
 		}else if("deleteAll".equals(method)){
 			this.deleteAll(req,resp);
 		}else{
@@ -47,35 +47,68 @@ public class CustomerController extends HttpServlet{
 	}
 
 
-
-	private void delete(HttpServletRequest req, HttpServletResponse resp) {
-		Object value = null;
-		
-		String cId = req.getParameter("cId");
-		
-		if(cId != null){
-			value = Integer.valueOf(cId);
-		}
-		
-		
-		Customer customer = new Customer();
-		
-		customer.setcId((Integer)value);
-		service.delete(customer);
+	private void findAll(HttpServletRequest req, HttpServletResponse resp) {
+		List<Customer> customers = service.findAll();
+		req.setAttribute("customers",customers);
 		try {
-			resp.sendRedirect(req.getContextPath()+"/customerController?method=findAll");
-		} catch (IOException e) {
+			req.getRequestDispatcher("/html/customers_list.jsp").forward(req, resp);
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
+
+
+	private void findAllByPage(HttpServletRequest req, HttpServletResponse resp) {
+		HttpSession session = req.getSession();
+		PageUtil page = new PageUtil();
+		String condition = req.getParameter("condition");
+		if(condition == null) {
+			if(session.getAttribute("condition") == null) {
+				page.setCondition("");
+			}else {
+				page.setCondition(session.getAttribute("condition").toString());
+			}
+		}else {
+			page.setCondition(condition);
+			session.setAttribute("condition",condition);
+		}
+		
+		String curPage = req.getParameter("curPage");
+		if(curPage == null) {
+			page.setCurPage(1);
+		}else {
+			page.setCurPage(Integer.valueOf(curPage));
+		}
+		
+		
+		
+		page = service.findAllByPage(page);
+		req.setAttribute("pageUtil",page);
+		try {
+			req.getRequestDispatcher("/html/customers_list.jsp").forward(req, resp);
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+
 	private void deleteAll(HttpServletRequest req, HttpServletResponse resp) {
 		String[] cIds = req.getParameterValues("cId");
 		if(cIds != null) {
 			service.deleteAll(cIds);
 		} 
 		try {
-			resp.sendRedirect(req.getContextPath()+"/customerController?method=findAll");
+			resp.sendRedirect(req.getContextPath()+"/customerController?method=findAllByPage");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -155,7 +188,7 @@ public class CustomerController extends HttpServlet{
 		
 		service.update(customer);
 		try {
-			resp.sendRedirect(req.getContextPath()+"/customerController?method=findAll");
+			resp.sendRedirect(req.getContextPath()+"/customerController?method=findAllByPage");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -257,7 +290,7 @@ public class CustomerController extends HttpServlet{
 		
 		service.add(customer);
 		try {
-			resp.sendRedirect(req.getContextPath()+"/customerController?method=findAll");
+			resp.sendRedirect(req.getContextPath()+"/customerController?method=findAllByPage");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -271,17 +304,4 @@ public class CustomerController extends HttpServlet{
 		}
 	}
 
-	private void findAll(HttpServletRequest req, HttpServletResponse resp) {
-		List<Customer> customers = service.findAll();
-		req.setAttribute("customers",customers);
-		try {
-			req.getRequestDispatcher("/html/customers_list.jsp").forward(req, resp);
-		} catch (ServletException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 }

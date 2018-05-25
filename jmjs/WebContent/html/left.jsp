@@ -33,9 +33,9 @@
             <!-- systemManager下拉标签,.panel-collapse和.collapse标明折叠元素 没有.in表示不要显示 -->
             <div id="infoManager" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="collapseListGroupHeading1">
                 <div class="list-group">
-                    <a class="list-group-item" href="<%=request.getContextPath() %>/customerController?method=findAll" target="right">客户管理</a>
-                    <a class="list-group-item" href="<%=request.getContextPath() %>/goodsController?method=findAll&curPage=1" target="right">商品管理</a>
-                    <a class="list-group-item" href="<%=request.getContextPath() %>/supplierController?method=findAll" target="right">供应商管理</a>
+                    <a class="list-group-item" href="<%=request.getContextPath() %>/customerController?method=findAllByPage&condition=" target="right">客户管理</a>
+                    <a class="list-group-item" href="<%=request.getContextPath() %>/goodsController?method=findAllByPage&condition=" target="right">商品管理</a>
+                    <a class="list-group-item" href="<%=request.getContextPath() %>/supplierController?method=findAllByPage&condition=" target="right">供应商管理</a>
                 </div>
             </div>
             <ul class="nav nav-list">
@@ -51,8 +51,8 @@
             <!-- systemManager下拉标签,.panel-collapse和.collapse标明折叠元素 没有.in表示不要显示 -->
             <div id="bznessManager" class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapseListGroupHeading1">
                 <div class="list-group">
-                    <a class="list-group-item" href="<%=request.getContextPath() %>/depotController?method=findAll" target="right">进货管理</a>
-                    <a class="list-group-item" href="<%=request.getContextPath() %>/saleController?method=findAll" target="right">销售管理</a>
+                    <a class="list-group-item" href="<%=request.getContextPath() %>/depotController?method=findAllByPage&condition=" target="right">进货管理</a>
+                    <a class="list-group-item" href="<%=request.getContextPath() %>/saleController?method=findAllByPage&condition=" target="right">销售管理</a>
                 </div>
             </div>
             <ul class="nav nav-list">
@@ -68,8 +68,8 @@
             <!-- systemManager下拉标签,.panel-collapse和.collapse标明折叠元素 没有.in表示不要显示 -->
             <div id="stockManager" class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapseListGroupHeading1">
                 <div class="list-group">
-                    <a class="list-group-item" href="<%=request.getContextPath() %>/storageController?method=findAll" id="storage" target="right">库存盘点</a>
-                    <a class="list-group-item" href="<%=request.getContextPath() %>/goodsController?method=findAllPrice" target="right">价格调整</a>
+                    <a class="list-group-item" href="<%=request.getContextPath() %>/storageController?method=findAllByPage&condition=" id="storage" target="right">库存盘点</a>
+                    <a class="list-group-item" href="<%=request.getContextPath() %>/goodsController?method=findAllPriceByPage&condition=" target="right">价格调整</a>
                 </div>
             </div>
             <ul class="nav nav-list">

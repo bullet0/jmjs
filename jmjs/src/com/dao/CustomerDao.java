@@ -2,6 +2,7 @@ package com.dao;
 
 import com.pojo.Customer;
 import com.util.BaseDao;
+import com.util.PageUtil;
 
 import java.sql.Date;
 import java.util.List;
@@ -198,6 +199,88 @@ public class CustomerDao extends BaseDao {
 				Customer customer = new Customer();
 				customer.setcId(rs.getInt("c_id"));
 				customer.setcName(rs.getString("c_name"));
+				list.add(customer);
+			}
+			return list;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			this.close(conn,ps,rs);
+		}
+		return null;
+	}
+
+
+	public int getTotalCount(PageUtil page) {
+		Connection conn = this.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement("SELECT count(*) c FROM customer where LOCATE(?, `c_name`)>0 or LOCATE(?, `c_phone`)>0 or LOCATE(?, `c_address`)>0 or LOCATE(?, `c_email`)>0 or LOCATE(?, `c_con_mobile`)>0  or LOCATE(?, `c_con_name`)>0");
+			ps.setString(1, page.getCondition());
+			ps.setString(2, page.getCondition());
+			ps.setString(3, page.getCondition());
+			ps.setString(4, page.getCondition());
+			ps.setString(5, page.getCondition());
+			ps.setString(6, page.getCondition());
+			rs = ps.executeQuery();
+			conn.commit();
+			int count = 0;
+			while (rs.next()) {
+				count = rs.getInt("c");
+			}
+			return count;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			this.close(conn,ps,rs);
+		}
+		return 0;
+	}
+
+
+	public List<Customer> findAllByPage(PageUtil page) {
+		Connection conn = this.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		List<Customer> list = new ArrayList<Customer>();
+		try {
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement("select * from customer where LOCATE(?, `c_name`)>0 or LOCATE(?, `c_phone`)>0 or LOCATE(?, `c_address`)>0 or LOCATE(?, `c_email`)>0 or LOCATE(?, `c_con_mobile`)>0  or LOCATE(?, `c_con_name`)>0 limit ?,?");
+			ps.setString(1, page.getCondition());
+			ps.setString(2, page.getCondition());
+			ps.setString(3, page.getCondition());
+			ps.setString(4, page.getCondition());
+			ps.setString(5, page.getCondition());
+			ps.setString(6, page.getCondition());
+			ps.setInt(7, (page.getCurPage()-1)*page.getPageSize());
+			ps.setInt(8, page.getPageSize());
+			rs = ps.executeQuery();
+			conn.commit();
+			while (rs.next()) {
+				Customer customer = new Customer();
+				
+				customer.setcId(rs.getInt("c_id"));
+				
+				customer.setcName(rs.getString("c_name"));
+				
+				customer.setcPhone(rs.getString("c_phone"));
+				
+				customer.setcAddress(rs.getString("c_address"));
+				
+				customer.setcEmail(rs.getString("c_email"));
+				
+				customer.setcConMobile(rs.getString("c_con_mobile"));
+				
+				customer.setcConName(rs.getString("c_con_name"));
+				
+				customer.setcPostCode(rs.getString("c_post_code"));
+				
+				customer.setcAccount(rs.getString("c_account"));
+				
 				list.add(customer);
 			}
 			return list;

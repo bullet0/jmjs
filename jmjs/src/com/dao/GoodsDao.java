@@ -245,15 +245,17 @@ public class GoodsDao extends BaseDao  {
 		}
 	}
 
-	public int getCount(PageUtil page) {
+	public int getTotalCount(PageUtil page) {
 		Connection conn = this.getConnection();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
 			conn.setAutoCommit(false);
-			ps = conn.prepareStatement("select count(1) from goods where g_name like ?");
+			ps = conn.prepareStatement("select count(*) from goods where LOCATE(?, `g_name`)>0 or LOCATE(?, `g_produce`) or LOCATE(?, `g_supplier`)");
 			
-			ps.setObject(1, "%"+page.getCondition()+"%");
+			ps.setObject(1, page.getCondition());
+			ps.setObject(2, page.getCondition());
+			ps.setObject(3, page.getCondition());
 			
 			rs = ps.executeQuery();
 			conn.commit();
@@ -322,14 +324,93 @@ public class GoodsDao extends BaseDao  {
 		return null;
 	}
 
-	public List<GoodsVO> findAllPrice() {
+	public int changePrice(Goods goods) {
+		Connection conn = this.getConnection();
+		PreparedStatement ps = null;
+		try {
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement("update goods set g_Advise_Price=?,g_Sale_Price=?,g_Promotion_Price=? where g_Id = ?");
+			ps.setObject(1, goods.getgAdvisePrice());
+			ps.setObject(2, goods.getgSalePrice());
+			ps.setObject(3, goods.getgPromotionPrice());
+			ps.setObject(4, goods.getgId());
+			int i = ps.executeUpdate();
+			conn.commit();
+			return i;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			this.close(conn,ps,null);
+		}
+		return 0;
+	}
+
+
+	public List<Goods> findAllByPage(PageUtil page) {
+		Connection conn = this.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		List<Goods> list = new ArrayList<Goods>();
+		try {
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement("select * from goods where LOCATE(?, `g_name`)>0 or LOCATE(?, `g_produce`) or LOCATE(?, `g_supplier`)  limit ?,?");
+			ps.setObject(1, page.getCondition());
+			ps.setObject(2, page.getCondition());
+			ps.setObject(3, page.getCondition());
+			ps.setObject(4, (page.getCurPage()-1)*page.getPageSize());
+			ps.setObject(5, page.getPageSize());
+			rs = ps.executeQuery();
+			conn.commit();
+			while (rs.next()) {
+				Goods goods = new Goods();
+				
+				goods.setgId(rs.getInt("g_id"));
+				
+				goods.setgName(rs.getString("g_name"));
+				
+				goods.setgProduce(rs.getString("g_produce"));
+				
+				goods.setgProductionDate(rs.getDate("g_production_date"));
+				
+				goods.setgReleaseDate(rs.getDate("g_release_date"));
+				
+				goods.setgType(rs.getString("g_type"));
+				
+				goods.setgUnit(rs.getString("g_unit"));
+				
+				goods.setgRemark(rs.getString("g_remark"));
+				
+				goods.setgSupplier(rs.getString("g_supplier"));
+				
+				goods.setgAdvisePrice(rs.getDouble("g_Advise_Price"));
+				goods.setgSalePrice(rs.getDouble("g_Sale_Price"));
+				goods.setgPromotionPrice(rs.getDouble("g_Promotion_Price"));
+				list.add(goods);
+			}
+			return list;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			this.close(conn,ps,rs);
+		}
+		return null;
+	}
+
+
+	public List<GoodsVO> findAllPriceByPage(PageUtil page) {
 		Connection conn = this.getConnection();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		List<GoodsVO> list = new ArrayList<GoodsVO>();
 		try {
 			conn.setAutoCommit(false);
-			ps = conn.prepareStatement("SELECT g.g_id,g.g_name,g.g_supplier,g.g_unit,s.num ,g.g_advise_price,g.g_sale_price,g.g_promotion_price FROM goods g LEFT JOIN (SELECT `s_id`, `s_goods_name`, `s_supplier_name`, ROUND(SUM(`s_price`*`s_stock_num`) / SUM(`s_stock_num`),2) avg_price,`s_type`, SUM(`s_stock_num`) num,SUM(`s_price`*`s_stock_num`) sum_price  FROM `storage` GROUP BY s_goods_name) s ON g.g_name=s.s_goods_name");
+			ps = conn.prepareStatement("SELECT g.g_id,g.g_name,g.g_supplier,g.g_unit,s.num ,g.g_advise_price,g.g_sale_price,g.g_promotion_price FROM goods g LEFT JOIN (SELECT `s_id`, `s_goods_name`, `s_supplier_name`, ROUND(SUM(`s_price`*`s_stock_num`) / SUM(`s_stock_num`),2) avg_price,`s_type`, SUM(`s_stock_num`) num,SUM(`s_price`*`s_stock_num`) sum_price  FROM `storage` GROUP BY s_goods_name) s ON g.g_name=s.s_goods_name where LOCATE(?, g.g_name) or  LOCATE(?, g.g_supplier) limit ?,? ");
+			ps.setString(1, page.getCondition());
+			ps.setString(2, page.getCondition());
+			ps.setObject(3, (page.getCurPage()-1)*page.getPageSize());
+			ps.setObject(4, page.getPageSize());
 			rs = ps.executeQuery();
 			conn.commit();
 			while (rs.next()) {
@@ -355,25 +436,29 @@ public class GoodsDao extends BaseDao  {
 		return null;
 	}
 
-	public int changePrice(Goods goods) {
-		Connection conn = this.getConnection();
+
+	public int getPriceTotalCount(PageUtil page) {
+				Connection conn = this.getConnection();
 		PreparedStatement ps = null;
+		ResultSet rs = null;
 		try {
 			conn.setAutoCommit(false);
-			ps = conn.prepareStatement("update goods set g_Advise_Price=?,g_Sale_Price=?,g_Promotion_Price=? where g_Id = ?");
-			ps.setObject(1, goods.getgAdvisePrice());
-			ps.setObject(2, goods.getgSalePrice());
-			ps.setObject(3, goods.getgPromotionPrice());
-			ps.setObject(4, goods.getgId());
-			int i = ps.executeUpdate();
+			ps = conn.prepareStatement("SELECT COUNT(*) c FROM (SELECT g.g_id,g.g_name,g.g_supplier,g.g_unit,s.num ,g.g_advise_price,g.g_sale_price,g.g_promotion_price FROM goods g LEFT JOIN (SELECT `s_id`, `s_goods_name`, `s_supplier_name`, ROUND(SUM(`s_price`*`s_stock_num`) / SUM(`s_stock_num`),2) avg_price,`s_type`, SUM(`s_stock_num`) num,SUM(`s_price`*`s_stock_num`) sum_price  FROM `storage` GROUP BY s_goods_name) s ON g.g_name=s.s_goods_name WHERE LOCATE(?, g.g_name)>0 OR  LOCATE(?, g.g_supplier)>0)a");
+			
+			ps.setObject(1, page.getCondition());
+			ps.setObject(2, page.getCondition());
+			
+			rs = ps.executeQuery();
 			conn.commit();
-			return i;
+			rs.next();
+			
+			return rs.getInt(1);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally {
-			this.close(conn,ps,null);
+			this.close(conn,ps,rs);
 		}
-		return 0;
+		return -1;
 	}
 }

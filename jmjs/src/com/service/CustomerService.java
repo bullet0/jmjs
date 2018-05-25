@@ -2,6 +2,8 @@ package com.service;
 
 import com.dao.CustomerDao;
 import com.pojo.Customer;
+import com.util.PageUtil;
+
 import java.util.List;
 
 public class CustomerService {
@@ -33,6 +35,18 @@ public class CustomerService {
 	public List<Customer> findAllCusIdAndName() {
 		// TODO Auto-generated method stub
 		return dao.findAllCusIdAndName();
+	}
+
+	public PageUtil findAllByPage(PageUtil page) {
+		int count = dao.getTotalCount(page);
+		page.setTotalCount(count);
+		
+		page.setTotalPage();
+		
+		List<Customer> list = dao.findAllByPage(page);
+		page.setList(list);
+		
+		return page;
 	}
 	
 }

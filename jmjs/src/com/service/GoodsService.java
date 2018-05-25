@@ -26,16 +26,11 @@ public class GoodsService {
 		dao.add(goods);
 	}
 
-	public PageUtil findAll(PageUtil page) {
+	public List<Goods> findAll(PageUtil page) {
 		
-		int count = dao.getCount(page);
-		page.setTotalCount(count);
 		
-		page.setTotalPage();
-		
-		List<Goods> list = dao.findAll(page);
-		page.setList(list);
-		return page;
+		List<Goods> list = dao.findAll();
+		return list;
 	}
 	public List<Goods> findAll() {
 		
@@ -55,13 +50,31 @@ public class GoodsService {
 		return dao.findAllGoodIdAndName();
 	}
 
-	public List<GoodsVO> findAllPrice() {
-		// TODO Auto-generated method stub
-		return dao.findAllPrice();
-	}
 
 	public int changePrice(Goods goods) {
 		return dao.changePrice(goods);
+	}
+
+	public PageUtil findAllByPage(PageUtil page) {
+		int count = dao.getTotalCount(page);
+		page.setTotalCount(count);
+		
+		page.setTotalPage();
+		
+		List<Goods> list = dao.findAllByPage(page);
+		page.setList(list);
+		return page;
+	}
+
+	public PageUtil findAllPriceByPage(PageUtil page) {
+		int count = dao.getPriceTotalCount(page);
+		page.setTotalCount(count);
+		
+		page.setTotalPage();
+		
+		List<GoodsVO> list = dao.findAllPriceByPage(page);
+		page.setList(list);
+		return page;
 	}
 	
 }

@@ -5,7 +5,9 @@ import java.util.Date;
 import java.util.List;
 
 import com.dao.DepotDao;
+import com.pojo.Customer;
 import com.pojo.Depot;
+import com.util.PageUtil;
 
 public class DepotService {
 	private DepotDao dao = new DepotDao();
@@ -41,5 +43,17 @@ public class DepotService {
 		SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmssSSS"); // 时间字符串产生方式
         String uid_pfix = "NO.P" + format.format(new Date());
         return uid_pfix;
+	}
+
+	public PageUtil findAllByPage(PageUtil page) {
+		int count = dao.getTotalCount(page);
+		page.setTotalCount(count);
+		
+		page.setTotalPage();
+		
+		List<Depot> list = dao.findAllByPage(page);
+		page.setList(list);
+		
+		return page;
 	}
 }

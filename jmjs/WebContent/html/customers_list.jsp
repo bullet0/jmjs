@@ -39,7 +39,6 @@
 </head>
 
 <body>
-
     <div class="container-fluid">
         <!--  标签型导航 -->
         <div class="row" style="margin-bottom: 20px">
@@ -109,7 +108,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                        <c:forEach items="${customers}" var="customer" varStatus="vs">
+                        <c:forEach items="${pageUtil.list}" var="customer" varStatus="vs">
                          <tr>
                                 <td>
                                     <div class="checkbox">
@@ -135,35 +134,9 @@
                     </table>
             </form>
             </div>
-
+			
             <!-- 翻页导航条 -->
-            <div class="row">
-                <div class="col-md-4 col-md-push-4">
-                    <ul class="pagination">
-                        <li>
-                            <a href="#">&laquo;首页</a>
-                        </li>
-                        <li class="active">
-                            <a href="#">1</a>
-                        </li>
-                        <li>
-                            <a href="#">2</a>
-                        </li>
-                        <li>
-                            <a href="#">3</a>
-                        </li>
-                        <li>
-                            <a href="#">4</a>
-                        </li>
-                        <li>
-                            <a href="#">5</a>
-                        </li>
-                        <li>
-                            <a href="#">尾页&raquo;</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+            <jsp:include page="/html/page.jsp"></jsp:include>
         </div>
     </div>
 
@@ -189,6 +162,10 @@
         	$("input[name='cId']").each(function(){
         			this.checked = f;
         	});
+        }
+        
+        function toPage(curPage){
+        	location = "<%=request.getContextPath() %>/customerController?method=findAllByPage&curPage="+curPage;
         }
     </script>
 

@@ -27,7 +27,7 @@
         <div class="row">
             <ul class="nav nav-tabs">
                 <li>
-                    <a href="<%=request.getContextPath() %>/saleController?method=findAll">数据查询</a>
+                    <a href="<%=request.getContextPath() %>/saleController?method=findAllByPage&condition=">数据查询</a>
                 </li>
                 <li>
                     <a href="javascript:toAdd()">数据添加</a>

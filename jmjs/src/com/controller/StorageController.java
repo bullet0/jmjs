@@ -8,8 +8,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import java.text.SimpleDateFormat;
 import com.service.StorageService;
+import com.util.PageUtil;
 import com.google.gson.Gson;
 import com.pojo.ResponseObj;
 import com.pojo.StorageVO;
@@ -22,13 +25,11 @@ public class StorageController extends HttpServlet{
 	private StorageService service = new StorageService();
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		req.setCharacterEncoding("utf-8");
-		resp.setContentType("text/html;charset=utf-8");
 		
 		String method = req.getParameter("method");
 		
-		if("findAll".equals(method)) {
-			this.findAll(req,resp);
+		if("findAllByPage".equals(method)) {
+			this.findAllByPage(req,resp);
 		}else if("getDangerCount".equals(method)) {
 			this.getDangerCount(req,resp);
 		}else{
@@ -38,6 +39,42 @@ public class StorageController extends HttpServlet{
 		
 		
 		
+	}
+
+	private void findAllByPage(HttpServletRequest req, HttpServletResponse resp) {
+		HttpSession session = req.getSession();
+		PageUtil page = new PageUtil();
+		String condition = req.getParameter("condition");
+		if(condition == null) {
+			if(session.getAttribute("condition") == null) {
+				page.setCondition("");
+			}else {
+				page.setCondition(session.getAttribute("condition").toString());
+			}
+		}else {
+			page.setCondition(condition);
+			session.setAttribute("condition",condition);
+		}
+		
+		String curPage = req.getParameter("curPage");
+		if(curPage == null) {
+			page.setCurPage(1);
+		}else {
+			page.setCurPage(Integer.valueOf(curPage));
+		}
+		
+		page = service.findAllByPage(page);
+		
+		req.setAttribute("pageUtil",page);
+		try {
+			req.getRequestDispatcher("/html/storage_list.jsp").forward(req, resp);
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void getDangerCount(HttpServletRequest req, HttpServletResponse resp) {
@@ -58,18 +95,4 @@ public class StorageController extends HttpServlet{
 		}
 	}
 
-	private void findAll(HttpServletRequest req, HttpServletResponse resp) {
-		List<StorageVO> storages = service.findAll();
-		req.setAttribute("storages",storages);
-		try {
-			req.getRequestDispatcher("/html/storage_list.jsp").forward(req, resp);
-		} catch (ServletException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 }

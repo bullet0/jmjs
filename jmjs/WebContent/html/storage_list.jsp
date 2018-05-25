@@ -99,7 +99,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                        <c:forEach items="${storages}" var="storage" varStatus="vs">
+                        <c:forEach items="${pageUtil.list}" var="storage" varStatus="vs">
                          <tr>
                                 <td>
                                     <div class="checkbox">
@@ -132,33 +132,7 @@
             </div>
 
             <!-- 翻页导航条 -->
-            <div class="row">
-                <div class="col-md-4 col-md-push-4">
-                    <ul class="pagination">
-                        <li>
-                            <a href="#">&laquo;首页</a>
-                        </li>
-                        <li class="active">
-                            <a href="#">1</a>
-                        </li>
-                        <li>
-                            <a href="#">2</a>
-                        </li>
-                        <li>
-                            <a href="#">3</a>
-                        </li>
-                        <li>
-                            <a href="#">4</a>
-                        </li>
-                        <li>
-                            <a href="#">5</a>
-                        </li>
-                        <li>
-                            <a href="#">尾页&raquo;</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+            <jsp:include page="/html/page.jsp"></jsp:include>
         </div>
     
 
@@ -168,6 +142,9 @@
     <script src="<%=request.getContextPath() %>/bootstrap-3.3.7-dist/js/jquery-3.1.1.min.js"></script>
     <script src="<%=request.getContextPath() %>/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
     <script>
+	    function toPage(curPage){
+	    	location = "<%=request.getContextPath() %>/storageController?method=findAllByPage&curPage="+curPage;
+	    }
     </script>
 
 

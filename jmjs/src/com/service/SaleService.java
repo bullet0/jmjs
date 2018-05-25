@@ -1,7 +1,9 @@
 package com.service;
 
 import com.dao.SaleDao;
+import com.pojo.Depot;
 import com.pojo.Sale;
+import com.util.PageUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,6 +41,18 @@ public class SaleService {
 		SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmssSSS"); // 时间字符串产生方式
         String uid_pfix = "NO.S" + format.format(new Date());
         return uid_pfix;
+	}
+
+	public PageUtil findAllByPage(PageUtil page) {
+		int count = dao.getTotalCount(page);
+		page.setTotalCount(count);
+		
+		page.setTotalPage();
+		
+		List<Sale> list = dao.findAllByPage(page);
+		page.setList(list);
+		
+		return page;
 	}
 	
 }

@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.pojo.Depot;
 import com.pojo.Goods;
@@ -16,6 +17,7 @@ import com.pojo.Supplier;
 import com.service.DepotService;
 import com.service.GoodsService;
 import com.service.SupplierService;
+import com.util.PageUtil;
 @WebServlet("/depotController")
 public class DepotController extends HttpServlet{
 	private DepotService service = new DepotService();
@@ -24,13 +26,10 @@ public class DepotController extends HttpServlet{
 	
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		req.setCharacterEncoding("utf-8");
-		resp.setContentType("text/html;charset=utf-8");
-		
 		String method = req.getParameter("method");
 		
-		if("findAll".equals(method)) {
-			this.findAll(req,resp);
+		if("findAllByPage".equals(method)) {
+			this.findAllByPage(req,resp);
 		}else if("toAdd".equals(method)){
 			this.toAdd(req,resp);
 		}else if("add".equals(method)){
@@ -39,8 +38,6 @@ public class DepotController extends HttpServlet{
 			this.toUpdate(req,resp);
 		}else if("update".equals(method)){
 			this.update(req,resp);
-		}else if("delete".equals(method)){
-			this.delete(req,resp);
 		}else if("deleteAll".equals(method)){
 			this.deleteAll(req,resp);
 		}else if("findOne".equals(method)){
@@ -52,6 +49,46 @@ public class DepotController extends HttpServlet{
 		
 		
 		
+	}
+
+
+
+	private void findAllByPage(HttpServletRequest req, HttpServletResponse resp) {
+		HttpSession session = req.getSession();
+		PageUtil page = new PageUtil();
+		String condition = req.getParameter("condition");
+		if(condition == null) {
+			if(session.getAttribute("condition") == null) {
+				page.setCondition("");
+			}else {
+				page.setCondition(session.getAttribute("condition").toString());
+			}
+		}else {
+			page.setCondition(condition);
+			session.setAttribute("condition",condition);
+		}
+		
+		String curPage = req.getParameter("curPage");
+		if(curPage == null) {
+			page.setCurPage(1);
+		}else {
+			page.setCurPage(Integer.valueOf(curPage));
+		}
+		
+		
+		
+		page = service.findAllByPage(page);
+		req.setAttribute("pageUtil",page);
+		
+		try {
+			req.getRequestDispatcher("/html/depot_list.jsp").forward(req, resp);
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 
@@ -85,29 +122,14 @@ public class DepotController extends HttpServlet{
 
 
 
-	private void delete(HttpServletRequest req, HttpServletResponse resp) {
-		Object value = null;
-		
-		String dId = req.getParameter("dId");
-		
-		Depot depot = new Depot();
-		
-		depot.setdId(dId);
-		service.delete(depot);
-		try {
-			resp.sendRedirect(req.getContextPath()+"/depotController?method=findAll");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	
 	private void deleteAll(HttpServletRequest req, HttpServletResponse resp) {
 		String[] dIds = req.getParameterValues("dId");
 		if(dIds != null) {
 			service.deleteAll(dIds);
 		} 
 		try {
-			resp.sendRedirect(req.getContextPath()+"/depotController?method=findAll");
+			resp.sendRedirect(req.getContextPath()+"/depotController?method=findAllByPage");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -176,7 +198,7 @@ public class DepotController extends HttpServlet{
 		
 		service.update(depot);
 		try {
-			resp.sendRedirect(req.getContextPath()+"/depotController?method=findAll");
+			resp.sendRedirect(req.getContextPath()+"/depotController?method=findAllByPage");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -267,7 +289,7 @@ public class DepotController extends HttpServlet{
 		
 		service.add(depot);
 		try {
-			resp.sendRedirect(req.getContextPath()+"/depotController?method=findAll");
+			resp.sendRedirect(req.getContextPath()+"/depotController?method=findAllByPage");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

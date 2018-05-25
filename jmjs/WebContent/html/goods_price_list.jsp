@@ -112,7 +112,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                        <c:forEach items="${list}" var="gs" varStatus="vs">
+                        <c:forEach items="${pageUtil.list}" var="gs" varStatus="vs">
                          <tr>
                                 <td>
                                     <div class="checkbox">
@@ -140,33 +140,7 @@
             </div>
 
             <!-- 翻页导航条 -->
-            <div class="row">
-                <div class="col-md-4 col-md-push-4">
-                    <ul class="pagination">
-                        <li>
-                            <a href="#">&laquo;首页</a>
-                        </li>
-                        <li class="active">
-                            <a href="#">1</a>
-                        </li>
-                        <li>
-                            <a href="#">2</a>
-                        </li>
-                        <li>
-                            <a href="#">3</a>
-                        </li>
-                        <li>
-                            <a href="#">4</a>
-                        </li>
-                        <li>
-                            <a href="#">5</a>
-                        </li>
-                        <li>
-                            <a href="#">尾页&raquo;</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+            <jsp:include page="/html/page.jsp"></jsp:include>
         </div>
     
 
@@ -205,7 +179,6 @@
            		url:'<%=request.getContextPath() %>/goodsController?method=changePrice',
            		data:{"gId":id,"gAdvisePrice":advisePrice,"gSalePrice":salePrice,"gPromotionPrice":promotionPrice},
            		success:function(msg){
-           			alert(msg)
            			var msg = JSON.parse(msg);
            			if(msg.msg == "error"){
            				alert("修改失败，请重新提交数据");
@@ -219,6 +192,10 @@
            		}
            	});
         	$(ths).parent().html("<a href=\"javascript:void(0)\" onclick=\"toUpdate(this,'"+id+"')\">修改</a>")
+        }
+        
+        function toPage(curPage){
+        	location = "<%=request.getContextPath() %>/goodsController?method=findAllPriceByPage&curPage="+curPage;
         }
     </script>
 

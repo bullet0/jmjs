@@ -145,33 +145,7 @@
             </div>
 
             <!-- 翻页导航条 -->
-            <div class="row">
-                <div class="col-md-4 col-md-push-4">
-                    <ul class="pagination">
-                        <li>
-                            <a href="#">&laquo;首页</a>
-                        </li>
-                        <li class="active">
-                            <a href="#">1</a>
-                        </li>
-                        <li>
-                            <a href="#">2</a>
-                        </li>
-                        <li>
-                            <a href="#">3</a>
-                        </li>
-                        <li>
-                            <a href="#">4</a>
-                        </li>
-                        <li>
-                            <a href="#">5</a>
-                        </li>
-                        <li>
-                            <a href="#">尾页&raquo;</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+           	<jsp:include page="/html/page.jsp"></jsp:include>
         </div>
     
 
@@ -192,7 +166,9 @@
         function deleteAll(){
         	$("#form1").submit();
         }
-        
+        function toPage(curPage){
+        	location = "<%=request.getContextPath() %>/goodsController?method=findAllByPage&curPage="+curPage;
+        }
         function chooseAll(f){
         	$("input[name='gId']").each(function(){
         			this.checked = f;
