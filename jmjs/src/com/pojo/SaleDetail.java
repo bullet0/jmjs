@@ -7,9 +7,8 @@ public class SaleDetail{
 	private Integer sdId;
 	private Sale saleId;
 	private Goods goodsId;
-	private Integer salePrice;
+	private Double salePrice;
 	private Integer saleNumber;
-	private Double purchasePrice;
 
 	public Integer getSdId() {
 		return sdId;
@@ -48,21 +47,28 @@ public class SaleDetail{
 		this.goodsId = goodsId;
 	}
 
-	public Integer getSalePrice() {
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * @return the salePrice
+	 */
+	public Double getSalePrice() {
 		return salePrice;
 	}
 
-	public void setSalePrice(Integer salePrice) {
+	/**
+	 * @param salePrice the salePrice to set
+	 */
+	public void setSalePrice(Double salePrice) {
 		this.salePrice = salePrice;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
 	public Integer getSaleNumber() {
 		return saleNumber;
 	}
@@ -71,19 +77,6 @@ public class SaleDetail{
 		this.saleNumber = saleNumber;
 	}
 
-	/**
-	 * @return the purchasePrice
-	 */
-	public Double getPurchasePrice() {
-		return purchasePrice;
-	}
-
-	/**
-	 * @param purchasePrice the purchasePrice to set
-	 */
-	public void setPurchasePrice(Double purchasePrice) {
-		this.purchasePrice = purchasePrice;
-	}
 	
 }
 

@@ -44,7 +44,8 @@
         <div class="row">
             <form id="form1" action="<%=request.getContextPath() %>/depotController?method=update" method="post">
                 <input type="hidden" name="dId" id="dId" value="${depot.dId}">
-                <div class="form-group col-md-6">
+            <div class="col-md-12">
+            	<div class="form-group col-md-6">
                     <label for="dNo">订单编号</label>
                     <input type="text" readonly="readonly" class="form-control" name="dNo" id="dNo" value="${depot.dNo}">
                 </div>
@@ -52,7 +53,10 @@
                     <label for="dVarietyNum">品种数量</label>
                     <input type="text" readonly="readonly" class="form-control" name="dVarietyNum" id="dVarietyNum" value="${depot.dVarietyNum}">
                 </div>
-                <div class="form-group col-md-6">
+            </div>
+            
+            <div class="col-md-12">
+             <div class="form-group col-md-6">
                     <label for="dTotalPrice">总价</label>
                     <input type="text" readonly="readonly" class="form-control" name="dTotalPrice" id="dTotalPrice" value="${depot.dTotalPrice}">
                 </div>
@@ -66,7 +70,10 @@
 		            </div> 
                     
                 </div>
-                <div class="form-group col-md-6">
+            </div>
+                
+              <div class="col-md-12">
+               <div class="form-group col-md-6">
                     <label for="sId">供应商</label>
                     <div class="form-group">
                         <select class="form-control" id="sId" name="sId">
@@ -100,6 +107,9 @@
                         </select>
                     </div>
                 </div>
+              
+              </div>
+               
                 
                 <div class="col-md-12">
         			<button class="btn btn-primary col-md-12" onclick="return addGoods()">添 加 商 品 明 细</button>

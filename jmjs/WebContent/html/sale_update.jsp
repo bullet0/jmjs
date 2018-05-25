@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,20 +16,12 @@
      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <style>
-		h3{
-			display: inline-block;
-		}
-    </style>
-    <link href="<%=request.getContextPath() %>/bootstrap-3.3.7-dist/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />  
-	
-    <script src="<%=request.getContextPath()%>/bootstrap-3.3.7-dist/js/jquery-3.1.1.min.js"></script>
-    <script src="<%=request.getContextPath()%>/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
-    <script src="<%=request.getContextPath() %>/bootstrap-3.3.7-dist/js/moment.js"></script>
-    <script src="<%=request.getContextPath() %>/bootstrap-3.3.7-dist/js/bootstrap-datetimepicker.min.js"></script>
+       <link href="<%=request.getContextPath() %>/bootstrap-3.3.7-dist/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />  
+
 </head>
 
 <body>
+
     <div class="container-fluid">
         <!--  标签型导航 -->
         <div class="row">
@@ -36,8 +29,11 @@
                 <li>
                     <a href="<%=request.getContextPath() %>/saleController?method=findAll">数据查询</a>
                 </li>
+               	<li>
+                    <a href="javascript:toAdd()">数据添加</a>
+                </li>
                 <li class="active">
-                    <a href="javascript:void(0)">数据添加</a>
+                    <a href="javascript:void(0)">数据修改</a>
                 </li>
             </ul>
         </div>
@@ -46,31 +42,49 @@
             <hr style="margin-top: 0px ;" />
         </div>
         <div class="row">
-            <form id="form1" action="<%=request.getContextPath() %>/saleController?method=add" method="post">
-                <div class="form-group col-md-6">
-                    <label for="sVarietyNum">品种数量</label>
-                    <input type="text" readonly="readonly" class="form-control" name="sVarietyNum" id="sVarietyNum" value="0">
+            <form id="form1" action="<%=request.getContextPath() %>/saleController?method=update" method="post">
+                <input type="hidden" name="sId" id="sId" value="${sale.sId}">
+            <div class="col-md-12">
+	            <div class="form-group col-md-6">
+	                    <label for="sNo">销售单编号</label>
+	                    <input type="text" readonly="readonly" class="form-control" name="sNo" id="sNo" value="${sale.sNo}">
                 </div>
                 <div class="form-group col-md-6">
+                    <label for="sVarietyNum">品种数量</label>
+                    <input type="text" readonly="readonly" class="form-control" name="sVarietyNum" id="sVarietyNum" value="${sale.sVarietyNum}">
+                </div>
+            </div>
+             <div class="col-md-12">
+              <div class="form-group col-md-6">
                     <label for="sTotalPrice">总价</label>
-                    <input type="text" readonly="readonly" class="form-control" name="sTotalPrice" id="sTotalPrice" value="0">
+                    <input type="text" readonly="readonly" class="form-control" name="sTotalPrice" id="sTotalPrice" value="${sale.sTotalPrice}">
                 </div>
                 <div class="form-group col-md-6">
                     <label for="sSaleDate">销售日期</label>
                     <div class='input-group date' id="datetimepicker">  
-                    	<input type="text" class="form-control" name="sSaleDate" id="sSaleDate" placeholder="请输入销售日期">
+                    	<input type="text" class="form-control" name="sSaleDate" id="sSaleDate" value="${sale.sSaleDate}" placeholder="请输入销售日期">
 		                <span class="input-group-addon">  
 		                    <span class="glyphicon glyphicon-calendar"></span>  
 		                </span>  
 		            </div> 
                     
                 </div>
-                <div class="form-group col-md-6">
-                    <label for="customerId">客户</label>
+             </div>   
+        
+              <div class="col-md-12">
+               <div class="form-group col-md-6">
+                    <label for="cId">客户</label>
                     <div class="form-group">
-                        <select class="form-control" id="customerId" name="customerId">
-                        	<c:forEach items="${customers}" var="cus">
-                        		<option value="${cus.cId}">${cus.cName}</option>
+                        <select class="form-control" id="cId" name="cId">
+                        	<c:forEach items="${customers}" var="customer">
+                        		<c:choose>
+                        			<c:when test="${customer.cId == sale.customerId.cId}">
+                        				<option value="${customer.cId}" selected="selected">${customer.cName}</option>
+                        			</c:when>
+                        			<c:otherwise>
+                        				<option value="${customer.cId}" >${customer.cName}</option>
+                        			</c:otherwise>
+                        		</c:choose>
                         	</c:forEach>
                         </select>
                     </div>
@@ -79,19 +93,59 @@
                     <label for="sSettlementWay">支付方式</label>
                     <div class="form-group">
                         <select class="form-control" id="sSettlementWay" name="sSettlementWay">
-                            <option>现金</option>
-                            <option>银行卡</option>
-                            <option>信用卡</option>
-                            <option>支付宝</option>
+                        	<c:forEach items="现金,银行卡,信用卡,支付宝" var="way">
+                        		<c:choose>
+                        			<c:when test="${way == sale.sSettlementWay}">
+                        				<option selected="selected">${way}</option>
+                        			</c:when>
+                        			<c:otherwise>
+                        				<option>${way}</option>
+                        			</c:otherwise>
+                        		</c:choose>
+                        	</c:forEach>
                         </select>
                     </div>
                 </div>
+              </div>
+               
                 
                 <div class="col-md-12">
         			<button class="btn btn-primary col-md-12" onclick="return addGoods()">添 加 商 品 明 细</button>
         		</div>
         		<div class="col-md-12" id="addDiv"> 
-        			
+        			<c:if test="${!empty sale.saleDetails}">
+        			<c:forEach items="${sale.saleDetails}" var="saleDetails">
+        			 	<div class="row">
+	        				<div class="form-group col-md-4">
+		        				<label for="gId">品种</label>
+		        				<div class="form-group">
+			        				<select class="form-control" id="gId" name="gId" onchange='getAdvisePrice(this)'>
+			        				<c:forEach items="${goods}" var="gs">
+			        					<c:choose>
+			        						<c:when test="${gs.gId == saleDetails.goodsId.gId}">
+			        							<option selected="selected" value='${gs.gId}'>${gs.gName}</option>
+			        						</c:when>
+			        						<c:otherwise>
+			        							<option value='${gs.gId}'>${gs.gName}</option>
+			        						</c:otherwise>
+			        					</c:choose>
+			        				</c:forEach>
+			        				</select>
+		        				</div>
+	        				</div>
+	        				<div class="form-group col-md-4">
+		        				<label for="goodsPrice">商品单价</label>
+		        				<input type="text" class="form-control" name="goodsPrice" id="goodsPrice" onkeyup="countTotalPrice(this)" placeholder="请输入商品单价" value="${saleDetails.salePrice}">
+	        				</div>
+	        				<div class="form-group col-md-3">
+		        				<label for="goodsNumber">商品数量</label>
+		        				<input type="text" class="form-control" name="goodsNumber" id="goodsNumber" onkeyup="countTotalPrice(this)" placeholder="请输入商品数量" value="${saleDetails.saleNumber}">
+	        				</div>
+	        					<label>&nbsp;</label>
+	        					<button class="btn btn-danger col-md-1" onclick="return deleteRow(this)"><span class="glyphicon glyphicon-glyphicon glyphicon-trash"></span></button>
+	        			</div>
+        			</c:forEach>
+        			</c:if>
         		</div>
                 <div class="col-md-12">
                     <hr/>
@@ -101,7 +155,7 @@
 
                         </div>
                         <div class="col-md-1 col-md-push-9">
-                            <button class="btn btn-primary" onclick="save()" type="button">保存</button>
+                            <button class="btn btn-primary" onclick="update()" type="button">修改</button>
 
                         </div>
 
@@ -113,29 +167,32 @@
 
     </div>
 
-    <script>
-    $(function () {  
-        $('#datetimepicker').datetimepicker({  
-            format: 'YYYY-MM-DD HH:mm:ss',  
-            locale: moment.locale('zh-cn')  
-        });  
-    }); 
+      <script src="<%=request.getContextPath()%>/bootstrap-3.3.7-dist/js/jquery-3.1.1.min.js"></script>
+    <script src="<%=request.getContextPath()%>/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+    <script src="<%=request.getContextPath() %>/bootstrap-3.3.7-dist/js/moment.js"></script>
+    <script src="<%=request.getContextPath() %>/bootstrap-3.3.7-dist/js/bootstrap-datetimepicker.min.js"></script>
     
-    	/*
+    <script>
+		/*
         $('input[id=lefile]').change(function () {
             $('#photoCover').val($(this).val());
         });
 		*/
-		function save(){
+		function update(){
+			
 			$("#form1").submit();
 		}
-        var count = 1;
+		function toAdd() {
+            window.location = "<%=request.getContextPath() %>/saleController?method=toAdd";
+        }
+		
+		var count = 1;
         function addGoods(){
         	var addDiv = $("#addDiv");
 
         	var str =   "<div class=\"row\">"+
         				"<div class=\"form-group col-md-4\"><label for=\"gId\">品种</label>"+
-        				"<div class=\"form-group\"><select class=\"form-control\" id=\"gId\" name=\"gId\" onchange='getAdvisePrice(this)'>";
+        				"<div class=\"form-group\"><select class=\"form-control\" id=\"gId\" name=\"gId\">";
         	<c:forEach items="${goods}" var="gs">
         		str+="<option value='${gs.gId}'>${gs.gName}</option>";
         	</c:forEach>
@@ -145,8 +202,7 @@
         		str+="</div></div><div class=\"form-group col-md-4\">"+
         				"<label for=\"goodsPrice\">商品单价</label>"+
         				"<input type=\"text\" class=\"form-control\" name=\"goodsPrice\" id=\"goodsPrice\" onkeyup=\"countTotalPrice(this)\" placeholder=\"请输入商品单价\">"+
-        				"</div>"+
-        				"<div class=\"form-group col-md-3\"><label for=\"goodsNumber\">商品数量</label>"+
+        				"</div><div class=\"form-group col-md-3\"><label for=\"goodsNumber\">商品数量</label>"+
         				"<input type=\"text\" class=\"form-control\" name=\"goodsNumber\" id=\"goodsNumber\" onkeyup=\"countTotalPrice(this)\" placeholder=\"请输入商品数量\">"+
         				"</div>"+
         				"<label>&nbsp;</label>"+
@@ -154,11 +210,10 @@
         				"</div>";
         	count++;		
         	addDiv.append(str);
-        	
         	//每添加一次，都要将商品种类添加一个
         	$("#sVarietyNum").val($("#sVarietyNum").val()*1+1);
         	
-        	getAdvisePrice(addDiv.find("select[name='gId']").last())
+        	getAdvisePrice(addDiv.find("select[name='gId']").last());
     		return false;
         }
         
@@ -188,8 +243,6 @@
        		$("#sTotalPrice").val(total);
         	
         }
-        
-        
         function getAdvisePrice(ths){
         	$.ajax({
         		type:'post',
@@ -204,7 +257,6 @@
         	});
         }
     </script>
-   
 </body>
 
 </html>

@@ -27,48 +27,62 @@
         <div class="row">
             <ul class="nav nav-tabs">
                 <li>
-                    <a href="<%=request.getContextPath() %>/depotController?method=findAll">数据查询</a>
+                    <a href="<%=request.getContextPath() %>/saleController?method=findAll">数据查询</a>
                 </li>
-               	<li>
+                <li>
                     <a href="javascript:toAdd()">数据添加</a>
                 </li>
                 <li class="active">
-                    <a href="javascript:void(0)">订单明细</a>
+                    <a href="javascript:void(0)">销售单明细</a>
                 </li>
             </ul>
         </div>
         <div class="row">
-            <h3 style="border-bottom: 2px solid #66c9f3;margin-bottom:0px; padding-bottom: 10px ;width:96px">订单信息</h3>
+            <h3 style="border-bottom: 2px solid #66c9f3;margin-bottom:0px; padding-bottom: 10px ;width:96px">基本信息</h3>
             <hr style="margin-top: 0px ;" />
         </div>
         <div class="row">
-                <div class="form-group col-md-6">
-                    <label for="dId">订单编号</label>
-                    <input type="text" readonly="readonly" class="form-control" name="dId" id="dId" value="${depot.dId}">
+            <form id="form1" action="<%=request.getContextPath() %>/saleController?method=update" method="post">
+                <input type="hidden" name="sId" id="sId" value="${sale.sId}">
+            <div class="col-md-12">
+	            <div class="form-group col-md-6">
+	                    <label for="sNo">销售单编号</label>
+	                    <input type="text" readonly="readonly" class="form-control" name="sNo" id="sNo" value="${sale.sNo}">
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="dVarietyNum">品种数量</label>
-                    <input type="text" readonly="readonly" class="form-control" name="dVarietyNum" id="dVarietyNum" value="${depot.dVarietyNum}">
+                    <label for="sVarietyNum">品种数量</label>
+                    <input type="text" readonly="readonly" class="form-control" name="sVarietyNum" id="sVarietyNum" value="${sale.sVarietyNum}">
+                </div>
+            </div>
+             <div class="col-md-12">
+              <div class="form-group col-md-6">
+                    <label for="sTotalPrice">总价</label>
+                    <input type="text" readonly="readonly" class="form-control" name="sTotalPrice" id="sTotalPrice" value="${sale.sTotalPrice}">
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="dTotalPrice">总价</label>
-                    <input type="text" readonly="readonly" class="form-control" name="dTotalPrice" id="dTotalPrice" value="${depot.dTotalPrice}">
+                    <label for="sSaleDate">销售日期</label>
+                    <div class='input-group date' id="datetimepicker">  
+                    	<input readonly="readonly" type="text" class="form-control" name="sSaleDate" id="sSaleDate" value="${sale.sSaleDate}" placeholder="请输入销售日期">
+		                <span class="input-group-addon">  
+		                    <span class="glyphicon glyphicon-calendar"></span>  
+		                </span>  
+		            </div> 
+                    
                 </div>
-                <div class="form-group col-md-6">
-                    <label for="dDate">进货日期</label>
-                    <input type="text" readonly="readonly" class="form-control" name="dDate" id="dDate" value="${depot.dDate}" placeholder="请输入进货日期">
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="sId">供应商</label>
+             </div>   
+        
+              <div class="col-md-12">
+               <div class="form-group col-md-6">
+                    <label for="cId">客户</label>
                     <div class="form-group">
-                        <select  disabled="disabled" class="form-control" id="sId" name="sId">
-                        	<c:forEach items="${suppliers}" var="sup">
+                        <select  disabled="disabled" class="form-control" id="cId" name="cId">
+                        	<c:forEach items="${customers}" var="customer">
                         		<c:choose>
-                        			<c:when test="${sup.sId == depot.supplierId.sId}">
-                        				<option value="${sup.sId}" selected="selected">${sup.sName}</option>
+                        			<c:when test="${customer.cId == sale.customerId.cId}">
+                        				<option value="${customer.cId}" selected="selected">${customer.cName}</option>
                         			</c:when>
                         			<c:otherwise>
-                        				<option value="${sup.sId}">${sup.sName}</option>
+                        				<option value="${customer.cId}" >${customer.cName}</option>
                         			</c:otherwise>
                         		</c:choose>
                         	</c:forEach>
@@ -76,15 +90,29 @@
                     </div>
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="dSettlementWay">支付方式</label>
+                    <label for="sSettlementWay">支付方式</label>
                     <div class="form-group">
-                        <select class="form-control" disabled="disabled" id="dSettlementWay" name="dSettlementWay">
-                        	<option selected="selected">${depot.dSettlementWay}</option>
+                        <select  disabled="disabled" class="form-control" id="sSettlementWay" name="sSettlementWay">
+                        	<c:forEach items="现金,银行卡,信用卡,支付宝" var="way">
+                        		<c:choose>
+                        			<c:when test="${way == sale.sSettlementWay}">
+                        				<option selected="selected">${way}</option>
+                        			</c:when>
+                        			<c:otherwise>
+                        				<option>${way}</option>
+                        			</c:otherwise>
+                        		</c:choose>
+                        	</c:forEach>
                         </select>
                     </div>
                 </div>
+              </div>
+               
                 
         		<div class="col-md-12" id="addDiv"> 
+        			
+        			
+        			
         			<div class="table-responsive">
 	                    <table class="table table-bordered table-striped table-hover">
 	                        <thead>
@@ -97,32 +125,35 @@
 	                        </thead>
 	                        <tbody>
 	                        <c:choose>
-	                        	<c:when test="${!empty depot.purchases}">
-		                        	<c:forEach items="${depot.purchases}" var="purchase" varStatus="vs">
+	                        	<c:when test="${!empty sale.saleDetails}">
+		                        	<c:forEach items="${sale.saleDetails}" var="saleDetail" varStatus="vs">
 				        			 	<tr>
 					        			 	<td>${vs.count}</td>
 			                                <td>
 												<c:forEach items="${goods}" var="gs">
-						        					<c:if test="${gs.gId == purchase.goodsId.gId}" >
+						        					<c:if test="${gs.gId == saleDetail.goodsId.gId}" >
 						        						${gs.gName}
 						        					</c:if>
 						        				</c:forEach>
 											</td>
-			                                 <td>${purchase.goodsPrice}</td>
-			                                <td>${purchase.goodsNumber}</td>
+			                                 <td>${saleDetail.salePrice}</td>
+			                                <td>${saleDetail.saleNumber}</td>
 			                            </tr>
 				        			</c:forEach>
 	                        	</c:when>
 	                        	<c:otherwise>
 	                        		<tr>
-	                        			<td colspan="10" align="center">订单中无明细</td>
+	                        			<td colspan="10" align="center">销售单中无明细</td>
 	                        		</tr>
 	                        	</c:otherwise>
 	                        </c:choose>
 	                        </tbody>
 	                    </table>
 	                </div>
+        			
+        			
         		</div>
+            </form>
         </div>
 
     </div>
@@ -138,11 +169,15 @@
             $('#photoCover').val($(this).val());
         });
 		*/
-		
+		function update(){
+			
+			$("#form1").submit();
+		}
 		function toAdd() {
-            window.location = "<%=request.getContextPath() %>/depotController?method=toAdd";
+            window.location = "<%=request.getContextPath() %>/saleController?method=toAdd";
         }
-        
+		
+		
     </script>
 </body>
 

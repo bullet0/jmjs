@@ -265,8 +265,6 @@ public class DepotController extends HttpServlet{
 			}
 		}
 		
-		
-		
 		service.add(depot);
 		try {
 			resp.sendRedirect(req.getContextPath()+"/depotController?method=findAll");

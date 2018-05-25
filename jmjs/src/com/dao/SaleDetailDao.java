@@ -66,7 +66,6 @@ public class SaleDetailDao  extends BaseDao {
 			ps.setObject(3, saleDetail.getGoodsId());
 			ps.setObject(4, saleDetail.getSalePrice());
 			ps.setObject(5, saleDetail.getSaleNumber());
-			ps.setObject(6, saleDetail.getPurchasePrice());
 			ps.setObject(7, saleDetail.getSdId());
 			ps.executeUpdate();
 			conn.commit();
@@ -94,7 +93,6 @@ public class SaleDetailDao  extends BaseDao {
 			while (rs.next()) {
 				saleDetail = new SaleDetail();
 				saleDetail.setSdId(rs.getInt("sd_id"));
-				saleDetail.setSalePrice(rs.getInt("sale_price"));
 				saleDetail.setSaleNumber(rs.getInt("sale_number"));
 //				saleDetail.setPurchasePrice(rs.getInt("purchase_price"));
 			}
@@ -124,7 +122,6 @@ public class SaleDetailDao  extends BaseDao {
 				saleDetail.setSdId(rs.getInt("sd_id"));
 				
 				
-				saleDetail.setSalePrice(rs.getInt("sale_price"));
 				
 				saleDetail.setSaleNumber(rs.getInt("sale_number"));
 				
@@ -152,7 +149,6 @@ public class SaleDetailDao  extends BaseDao {
 			ps.setObject(3, saleDetail.getGoodsId());
 			ps.setObject(4, saleDetail.getSalePrice());
 			ps.setObject(5, saleDetail.getSaleNumber());
-			ps.setObject(6, saleDetail.getPurchasePrice());
 			ps.executeUpdate();
 			conn.commit();
 		} catch (SQLException e) {

@@ -174,18 +174,18 @@
 
 
 
-    <script src="<%=request.getContextPath() %>/bootstrap-3.3.7-dist/js/jquery-3.1.1.min.js"></script>
-    <script src="<%=request.getContextPath() %>/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+    <script src="<%=request.getContextPath()%>/bootstrap-3.3.7-dist/js/jquery-3.1.1.min.js"></script>
+    <script src="<%=request.getContextPath()%>/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
     <script>
         function toAdd() {
             window.location = "<%=request.getContextPath() %>/saleController?method=toAdd";
         }
 
         function toUpdate(id) {
-            window.location = "<%=request.getContextPath() %>/saleController?method=toUpdate&dId="+id;
+            window.location = "<%=request.getContextPath() %>/saleController?method=toUpdate&sId="+id;
         }
         function findOne(id) {
-            window.location = "<%=request.getContextPath() %>/depotController?method=findOne&dId="+id;
+            window.location = "<%=request.getContextPath() %>/saleController?method=findOne&sId="+id;
         }
         
         function deleteAll(){

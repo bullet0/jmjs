@@ -114,7 +114,6 @@ public class SaleDetailController extends HttpServlet{
 			value = Integer.valueOf(salePrice);
 		}
 		
-		saleDetail.setSalePrice((Integer)value);
 		
 		
 		String saleNumber = req.getParameter("saleNumber");
@@ -196,7 +195,6 @@ public class SaleDetailController extends HttpServlet{
 			value = Integer.valueOf(salePrice);
 		}
 		
-		saleDetail.setSalePrice((Integer)value);
 		
 		
 		String saleNumber = req.getParameter("saleNumber");

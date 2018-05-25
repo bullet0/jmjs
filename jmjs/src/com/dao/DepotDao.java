@@ -44,19 +44,13 @@ public class DepotDao extends BaseDao  {
 			conn.setAutoCommit(false);
 			
 			//删除并更新数据库中的订单明细和商品数量
-			ps = conn.prepareStatement("{CALL update_storage(?)}");
+			ps = conn.prepareStatement("{CALL update_storage_purchase(?)}");
 			for (String dId : dIds) {
 				ps.setObject(1, dId);
 				ps.addBatch();
 			}
 			ps.executeBatch();
 			
-			ps = conn.prepareStatement("DELETE FROM purchase WHERE depot_id=?");
-			for (String dId : dIds) {
-				ps.setObject(1, dId);
-				ps.addBatch();
-			}
-			ps.executeBatch();
 			ps = conn.prepareStatement("delete from depot where d_Id = ?");
 			for (String dId : dIds) {
 				ps.setObject(1, dId);
@@ -89,9 +83,9 @@ public class DepotDao extends BaseDao  {
 			ps.executeUpdate();
 			
 			//删除并更新数据库中的订单明细和商品数量
-			ps = conn.prepareStatement("{CALL update_storage(?)}");
+			ps = conn.prepareStatement("{CALL update_storage_purchase(?)}");
 			ps.setObject(1, depot.getdId());
-			ps.execute();
+			ps.executeUpdate();
 			//增加新的订单信息
 			List<Purchase> purchases = depot.getPurchases();
 			for (int i = 0; i < purchases.size(); i++) {
@@ -104,7 +98,7 @@ public class DepotDao extends BaseDao  {
 				
 				//同时修改数量商品库存表中数据
 				
-				ps = conn.prepareStatement("{CALL insert_storage(?,?,?)}");
+				ps = conn.prepareStatement("{CALL insert_storage_purchase(?,?,?)}");
 				ps.setObject(1, purchases.get(i).getGoodsId().getgId());
 				ps.setObject(2, purchases.get(i).getGoodsPrice());
 				ps.setObject(3, purchases.get(i).getGoodsNumber());
@@ -309,7 +303,7 @@ public class DepotDao extends BaseDao  {
 				
 				//同时添加数量商品库存表中数据
 				
-				ps = conn.prepareStatement("{CALL insert_storage(?,?,?)}");
+				ps = conn.prepareStatement("{CALL insert_storage_purchase(?,?,?)}");
 				ps.setObject(1, purchases.get(i).getGoodsId().getgId());
 				ps.setObject(2, purchases.get(i).getGoodsPrice());
 				ps.setObject(3, purchases.get(i).getGoodsNumber());

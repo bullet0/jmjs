@@ -39,7 +39,7 @@ public class DepotService {
 	}
 	private String getNo() {
 		SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmssSSS"); // 时间字符串产生方式
-        String uid_pfix = "NO." + format.format(new Date());
+        String uid_pfix = "NO.P" + format.format(new Date());
         return uid_pfix;
 	}
 }

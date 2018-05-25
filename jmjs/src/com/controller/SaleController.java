@@ -12,9 +12,14 @@ import java.text.SimpleDateFormat;
 import com.service.CustomerService;
 import com.service.GoodsService;
 import com.service.SaleService;
+import com.service.StorageService;
 import com.pojo.Customer;
+import com.pojo.Depot;
 import com.pojo.Goods;
+import com.pojo.Purchase;
 import com.pojo.Sale;
+import com.pojo.SaleDetail;
+import com.pojo.StorageVO;
 import com.pojo.Supplier;
 
 import java.sql.Date;
@@ -25,6 +30,8 @@ public class SaleController extends HttpServlet{
 	private SaleService service = new SaleService();
 	private GoodsService goodsService = new GoodsService();
 	private CustomerService customerService = new CustomerService();
+	private StorageService storageService = new StorageService();
+	
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		req.setCharacterEncoding("utf-8");
@@ -46,13 +53,51 @@ public class SaleController extends HttpServlet{
 			this.delete(req,resp);
 		}else if("deleteAll".equals(method)){
 			this.deleteAll(req,resp);
-		}else{
+		}else if("findOne".equals(method)){
+			this.findOne(req,resp);
+		}
+		else{
 			System.out.println("用户请求路径有误");
 			resp.sendRedirect("404.jsp");
 		}
 		
 		
 		
+	}
+
+
+
+	private void findOne(HttpServletRequest req, HttpServletResponse resp) {
+		
+		Object value = null;
+		
+		String sId = req.getParameter("sId");
+		
+		if(sId != null){
+			value = Integer.valueOf(sId);
+		}
+		
+		Sale sale = new Sale();
+		
+		sale.setsId((Integer)value);
+		
+		sale = service.findOne(sale);
+		req.setAttribute("sale",sale);
+		
+		
+		List<Goods> goods = goodsService.findAllGoodIdAndName();
+		req.setAttribute("goods", goods);
+		List<Customer> customers = customerService.findAllCusIdAndName();
+		req.setAttribute("customers", customers);
+		try {
+			req.getRequestDispatcher("/html/sale_details.jsp").forward(req, resp);
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 
@@ -103,7 +148,9 @@ public class SaleController extends HttpServlet{
 		}
 		
 		sale.setsId((Integer)value);
+		String sNo = req.getParameter("sNo");
 		
+		sale.setsNo(sNo);
 		
 		String sVarietyNum = req.getParameter("sVarietyNum");
 		if(sVarietyNum != null){
@@ -135,18 +182,30 @@ public class SaleController extends HttpServlet{
 		sale.setsSettlementWay((String)value);
 		
 		
-		String customerId = req.getParameter("customerId");
+		String customerId = req.getParameter("cId");
 		if(customerId != null){
-			value = Integer.valueOf(customerId);
+			Customer c = new Customer();
+			c.setcId(Integer.valueOf(customerId));
+			sale.setCustomerId(c);
 		}
 		
+		String[] gIds = req.getParameterValues("gId");
+		String[] goodsPrice = req.getParameterValues("goodsPrice");
+		String[] goodsNumber = req.getParameterValues("goodsNumber");
+		if(gIds != null) {
+			for (int i=0;i< gIds.length;i++) {
+				SaleDetail saleDetail = new SaleDetail();
+				
+				Goods g = new Goods();
+				g.setgId(Integer.parseInt(gIds[i]));
+				saleDetail.setGoodsId(g);
+				
+				saleDetail.setSalePrice(Double.valueOf(goodsPrice[i]));
+				saleDetail.setSaleNumber(Integer.valueOf(goodsNumber[i]));
+				sale.getSaleDetails().add(saleDetail);
+			}
+		}
 		
-		
-		String customerName = req.getParameter("customerName");
-		value = customerName;
-		
-		
-		sale.setCustomerName((String)value);
 		
 		service.update(sale);
 		try {
@@ -171,8 +230,15 @@ public class SaleController extends HttpServlet{
 		
 		sale = service.findOne(sale);
 		req.setAttribute("sale",sale);
+		
+		
+		List<Goods> goods = goodsService.findAllGoodIdAndName();
+		req.setAttribute("goods", goods);
+		List<Customer> customers = customerService.findAllCusIdAndName();
+		req.setAttribute("customers", customers);
+		
 		try {
-			req.getRequestDispatcher("/修改页面").forward(req, resp);
+			req.getRequestDispatcher("/html/sale_update.jsp").forward(req, resp);
 		} catch (ServletException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -185,7 +251,6 @@ public class SaleController extends HttpServlet{
 	private void add(HttpServletRequest req, HttpServletResponse resp) {
 		Sale sale = new Sale();
 		Object value = null;
-		
 		String sId = req.getParameter("sId");
 		if(sId != null){
 			value = Integer.valueOf(sId);
@@ -227,15 +292,28 @@ public class SaleController extends HttpServlet{
 		String customerId = req.getParameter("customerId");
 		if(customerId != null){
 			value = Integer.valueOf(customerId);
+			Customer customer = new Customer();
+			customer.setcId((int)value);
+			sale.setCustomerId(customer);
 		}
 		
 		
-		
-		String customerName = req.getParameter("customerName");
-		value = customerName;
-		
-		
-		sale.setCustomerName((String)value);
+		String[] gIds = req.getParameterValues("gId");
+		String[] goodsPrice = req.getParameterValues("goodsPrice");
+		String[] goodsNumber = req.getParameterValues("goodsNumber");
+		if(gIds != null) {
+			for (int i=0;i< gIds.length;i++) {
+				SaleDetail saleDetail = new SaleDetail();
+				
+				Goods g = new Goods();
+				g.setgId(Integer.parseInt(gIds[i]));
+				saleDetail.setGoodsId(g);
+				
+				saleDetail.setSalePrice(Double.valueOf(goodsPrice[i]));
+				saleDetail.setSaleNumber(Integer.valueOf(goodsNumber[i]));
+				sale.getSaleDetails().add(saleDetail);
+			}
+		}
 		
 		
 		service.add(sale);
