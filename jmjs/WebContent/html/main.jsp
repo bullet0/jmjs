@@ -43,14 +43,14 @@
                     <ul class="nav navbar-nav pull-right">
                         <li>
                             <a href="#">
-                                <span class="glyphicon glyphicon-user"> 用户名</span>
+                                <span class="glyphicon glyphicon-user"> <b>${userInfo.uName}</b></span>
                             </a>
                         </li>
                         <li>
                             <a href="##">个人中心</a>
                         </li>
                         <li>
-                            <a href="##">登出</a>
+                            <a href="<%=request.getContextPath() %>/loginServlet?method=logout" target="_top">登出</a>
                         </li>
                     </ul>
                 </div>
@@ -91,9 +91,6 @@
 
                 });
             });
-
-
-
 
         });
 
